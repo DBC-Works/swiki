@@ -1,0 +1,12 @@
+pre-commit:
+  parallel: false
+  piped: true
+  commands:
+    format:
+      glob: '*.{js,ts,jsx,tsx,json}'
+      run: npx @biomejs/biome format --write {staged_files}
+    lint:
+      glob: '*.{js,ts,jsx,tsx,json}'
+      run: npx @biomejs/biome lint {staged_files}
+    stage:
+      run: git add {staged_files}
