@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta http-equiv="x-content-type-options" content="nosniff" />
+    <meta http-equiv="referrer-policy" content="same-origin" />
+    <meta
+      http-equiv="content-security-policy"
+      content="
+        require-trusted-types 'scripts';
+        trusted-types 'none';
+        child-src 'self';
+        navigate-to 'self';
+        font-src 'self';
+        img-src 'self';
+        media-src 'none';
+        object-src 'none;
+        manifest-src 'self';
+        frame-src 'none';
+        frame-ancestors 'none';
+        form-action 'none';
+        style-src 'self';
+        style-src-attr 'self';
+        style-src-elem 'self' 'unsafe-inline';
+        script-src 'self';
+        script-src-attr 'self';
+        script-src-elem 'self' 'unsafe-inline';
+        connect-src 'self';
+        worker-src 'self';"
+    />
+    <title>swiki</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
