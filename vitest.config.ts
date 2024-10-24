@@ -11,6 +11,7 @@ export default defineConfig({
     globals: true,
     root: 'src',
     environment: 'happy-dom',
+    setupFiles: './src/setupTest.ts',
     alias: [
       {
         find: /.*\.svg/,
