@@ -1,9 +1,11 @@
 import { RouterProvider, createRouter } from '@tanstack/react-router'
+import React from 'react'
+
 import { type RenderResult, render, screen, waitFor } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
-import React from 'react'
 import { describe, expect, it } from 'vitest'
 
+import './i18n'
 import { routeTree } from './routeTree.gen'
 
 describe('route', () => {

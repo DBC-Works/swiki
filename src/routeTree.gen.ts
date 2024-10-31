@@ -11,13 +11,13 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as HistoryIndexImport } from './routes/history/index'
 import { Route as IndexImport } from './routes/index'
-import { Route as PagesPageTitleDiffNumberImport } from './routes/pages/$pageTitle/diff/$number'
-import { Route as PagesPageTitleDiffIndexImport } from './routes/pages/$pageTitle/diff/index'
-import { Route as PagesPageTitleEditImport } from './routes/pages/$pageTitle/edit'
-import { Route as PagesPageTitleIndexImport } from './routes/pages/$pageTitle/index'
 import { Route as PagesIndexImport } from './routes/pages/index'
+import { Route as HistoryIndexImport } from './routes/history/index'
+import { Route as PagesPageTitleIndexImport } from './routes/pages/$pageTitle/index'
+import { Route as PagesPageTitleEditImport } from './routes/pages/$pageTitle/edit'
+import { Route as PagesPageTitleDiffIndexImport } from './routes/pages/$pageTitle/diff/index'
+import { Route as PagesPageTitleDiffNumberImport } from './routes/pages/$pageTitle/diff/$number'
 
 // Create/Update Routes
 

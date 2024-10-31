@@ -1,6 +1,8 @@
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+
+import i18next from './i18n'
 import { routeTree } from './routeTree.gen'
 
 /**
@@ -8,8 +10,8 @@ import { routeTree } from './routeTree.gen'
  */
 const router = createRouter({
   routeTree,
-  defaultErrorComponent: () => <h2>Error</h2>,
-  defaultNotFoundComponent: () => <h2>Not found</h2>,
+  defaultErrorComponent: () => <h2>{i18next.t('Error')}</h2>,
+  defaultNotFoundComponent: () => <h2>{i18next.t('Not found')}</h2>,
 })
 
 declare module '@tanstack/react-router' {
