@@ -2,6 +2,7 @@
 
 TODO: Do a final check before creating a pull request.
 
+- [ ] Pass all unit tests
 - [ ] No typo
 - [ ] No unnecessary codes(such as debug or develop only), no commented out codes
 - [ ] No unintended difference
