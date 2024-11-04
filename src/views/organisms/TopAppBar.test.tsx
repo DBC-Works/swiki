@@ -1,21 +1,11 @@
-import React from 'react'
-
-import { render, screen } from '@testing-library/react'
-import { userEvent } from '@testing-library/user-event'
+import { screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { mockLinkAdapter } from '../testUtils'
+import { mockLinkAdapter, setupComponentUnderTest } from '../testUtils'
 
 import { TopAppBar } from './TopAppBar'
 
 describe('TopAppBar component', () => {
-  const setup = async () => {
-    userEvent.setup()
-    return render(
-      <React.StrictMode>
-        <TopAppBar />
-      </React.StrictMode>,
-    )
-  }
+  const setup = () => setupComponentUnderTest(<TopAppBar />)
 
   beforeEach(() => {
     mockLinkAdapter()
@@ -25,9 +15,9 @@ describe('TopAppBar component', () => {
     vi.restoreAllMocks()
   })
 
-  it('should have the application title', async () => {
+  it('should have the application title', () => {
     // arrange
-    await setup()
+    setup()
 
     // act
     const actual = screen.getByRole('heading', { name: 'swiki', level: 1 })
@@ -40,9 +30,9 @@ describe('TopAppBar component', () => {
     ['front', 'FrontPage', '/'],
     ['pages', 'Pages', '/pages'],
     ['history', 'History', '/history'],
-  ])('should have the link to the %s page', async (_: string, pageTitle: string, href: string) => {
+  ])('should have the link to the %s page', (_: string, pageTitle: string, href: string) => {
     // arrange
-    await setup()
+    setup()
 
     // act
     const actual = screen.getByRole('link', { name: pageTitle })

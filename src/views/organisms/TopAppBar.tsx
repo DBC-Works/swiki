@@ -77,7 +77,6 @@ export const TopAppBar: React.FC = (): JSX.Element => {
           </Box>
         </Toolbar>
       </AppBar>
-      <Toolbar />
     </Box>
   )
 }
