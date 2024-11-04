@@ -19,7 +19,7 @@ export default defineConfig({
       },
     ],
     coverage: {
-      exclude: ['__mock__', '**/types.ts', 'main.tsx', 'vite-env.d.ts'],
+      exclude: ['__mock__', '**/types.ts', 'main.tsx', 'vite-env.d.ts', './setupTest.d.ts'],
       reporter: ['text', 'json', 'html'],
       reportsDirectory: '../build/coverage',
     },
