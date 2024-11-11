@@ -1,4 +1,4 @@
-import { RouterProvider, createRouter } from '@tanstack/react-router'
+import { RouterProvider, type ToOptions, createRouter } from '@tanstack/react-router'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
@@ -17,6 +17,9 @@ const router = createRouter({
 declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router
+  }
+  interface HistoryState {
+    returnPath?: ToOptions['to'] | string
   }
 }
 
