@@ -6,7 +6,12 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [TanStackRouterVite(), tsconfigPaths(), react(), svgr()],
+  plugins: [
+    TanStackRouterVite(),
+    tsconfigPaths(),
+    react({ jsxImportSource: '@emotion/react' }),
+    svgr(),
+  ],
   build: {
     minify: 'terser',
   },

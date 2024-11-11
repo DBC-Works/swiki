@@ -17,6 +17,14 @@ export default defineConfig({
         find: /.*\.svg/,
         replacement: path.resolve(__dirname, './src/__mock__/svg.tsx'),
       },
+      {
+        find: /@emotion\/react/,
+        replacement: path.resolve(__dirname, './src/__mock__/emotion.ts'),
+      },
+      {
+        find: /.*\/GlobalStyles/,
+        replacement: path.resolve(__dirname, './src/__mock__/GlobalStyles.tsx'),
+      },
     ],
     coverage: {
       exclude: ['__mock__', '**/types.ts', 'main.tsx', 'vite-env.d.ts', './setupTest.d.ts'],
