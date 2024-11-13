@@ -4,7 +4,6 @@ import ListIcon from '@mui/icons-material/List'
 import ListAltIcon from '@mui/icons-material/ListAlt'
 import {
   AppBar,
-  Box,
   Button,
   IconButton,
   Toolbar,
@@ -56,27 +55,23 @@ export const TopAppBar: React.FC = (): JSX.Element => {
   const { t } = useTranslation()
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ paddingTop: 'env(safe-area-inset-top)' }}>
-        <Toolbar>
-          <Typography variant="h6" component="h1" sx={{ flexGrow: 1 }}>
-            swiki
-          </Typography>
-          <Box>
-            <nav>
-              <MenuItem to="/" icon={<HomeIcon />}>
-                FrontPage
-              </MenuItem>
-              <MenuItem to="/pages" icon={<ListIcon />}>
-                {t('Pages')}
-              </MenuItem>
-              <MenuItem to="/history" icon={<ListAltIcon />}>
-                History
-              </MenuItem>
-            </nav>
-          </Box>
-        </Toolbar>
-      </AppBar>
-    </Box>
+    <AppBar position="static" sx={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <Toolbar>
+        <Typography variant="h6" component="h1" sx={{ flexGrow: 1 }}>
+          swiki
+        </Typography>
+        <nav>
+          <MenuItem to="/" icon={<HomeIcon />}>
+            FrontPage
+          </MenuItem>
+          <MenuItem to="/pages" icon={<ListIcon />}>
+            {t('Pages')}
+          </MenuItem>
+          <MenuItem to="/history" icon={<ListAltIcon />}>
+            History
+          </MenuItem>
+        </nav>
+      </Toolbar>
+    </AppBar>
   )
 }
