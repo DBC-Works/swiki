@@ -11,8 +11,9 @@ export const FrontPage: React.FC = (): JSX.Element => {
   const { t } = useTranslation()
   const frontPageContent = t('initialFrontPage')
 
+  // TODO: Determine title of latest FrontPage content
   return (
-    <Page>
+    <Page pageTitle="FrontPage" returnPath="/">
       <PageContentViewer>{frontPageContent}</PageContentViewer>
     </Page>
   )
