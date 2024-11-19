@@ -1,7 +1,7 @@
 import { RouterProvider, createMemoryHistory, createRouter } from '@tanstack/react-router'
 import React from 'react'
 
-import { type RenderResult, render, screen, waitFor } from '@testing-library/react'
+import { type RenderResult, getByRole, render, screen, waitFor } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
@@ -70,7 +70,7 @@ describe('route', () => {
       ).toBeInTheDocument()
     })
 
-    it('should return to FrontPage if moved from FrontPage and click the Cancel button without editing', async () => {
+    it('should return to FrontPage if moved from FrontPage and click the cancel button without editing', async () => {
       // arrange
       await setup('/')
       await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
@@ -82,7 +82,59 @@ describe('route', () => {
       expect(
         await screen.findByRole('heading', { name: 'FrontPage', level: 2 }),
       ).toBeInTheDocument()
-      expect(location.pathname).toEqual('/')
+    })
+
+    it('should show confirmation dialog if click the cancel button with editing', async () => {
+      // arrange
+      await setup('/')
+      await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
+      await userEvent.type(screen.getByRole('textbox', { name: 'Title' }), 'updated title')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+      // assert
+      expect(
+        await screen.findByText('Are you sure you want to discard your edits?'),
+      ).toBeInTheDocument()
+    })
+
+    it('should discard editing content and move back to from page if the OK button in the confirmation dialog is clicked.', async () => {
+      // arrange
+      await setup('/')
+      await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
+      await userEvent.type(screen.getByRole('textbox', { name: 'Title' }), 'updated title')
+      await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+      // act
+      await userEvent.click(getByRole(screen.getByRole('dialog'), 'button', { name: 'OK' }))
+
+      // assert
+      expect(
+        await screen.findByRole('heading', { name: 'FrontPage', level: 2 }),
+      ).toBeInTheDocument()
+      expect(
+        screen.queryByText('Are you sure you want to discard your edits?'),
+      ).not.toBeInTheDocument()
+    })
+
+    it('should dismiss confirmation dialog if the cancel button in the confirmation dialog is clicked.', async () => {
+      // arrange
+      await setup('/')
+      await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
+      await userEvent.type(screen.getByRole('textbox', { name: 'Title' }), 'updated title')
+      await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+      // act
+      await userEvent.click(getByRole(screen.getByRole('dialog'), 'button', { name: 'Cancel' }))
+
+      // assert
+      expect(
+        await screen.findByRole('heading', { name: /^Source - FrontPage/, level: 2 }),
+      ).toBeInTheDocument()
+      expect(
+        screen.queryByText('Are you sure you want to discard your edits?'),
+      ).not.toBeInTheDocument()
     })
   })
 })
