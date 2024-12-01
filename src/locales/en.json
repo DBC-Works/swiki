@@ -1,3 +1,4 @@
 {
-  "initialFrontPage": "## FrontPage\n\n&ldquo;swiki&rdquo;(&ldquo;s&rdquo; means &ldquo;solo&rdquo; or &ldquo;single&rdquo;) is a personal wiki application that runs in your browser without an internet connection and stores data locally.\n\n### CAUTION\n\nswiki uses localStorage to store data. LocalStorage is a not persistent storage, the browser will delete data if you do not use for a while."
+  "initialFrontPage": "&ldquo;swiki&rdquo;(&ldquo;s&rdquo; means &ldquo;solo&rdquo; or &ldquo;single&rdquo;) is a personal wiki application that runs in your browser without an internet connection and stores data locally.\n\n### CAUTION\n\nswiki uses localStorage to store data. LocalStorage is a not persistent storage, the browser will delete data if you do not use for a while.",
+  "initialSandBox": "Let's Try to edit to press the edit button.\n\nswiki's markup language is [GitHub Flavored Markdown](https://github.github.com/gfm/)."
 }

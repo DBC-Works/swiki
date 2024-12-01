@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { mockLinkAdapter, setupComponentUnderTest } from '../testUtils'
+import { setupComponentUnderTest } from '../../testUtils'
+import { mockLinkAdapter } from '../testUtils'
 
 import { TopAppBar } from './TopAppBar'
 

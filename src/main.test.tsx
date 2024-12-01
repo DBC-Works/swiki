@@ -1,12 +1,12 @@
 import { RouterProvider, createMemoryHistory, createRouter } from '@tanstack/react-router'
-import React from 'react'
 
-import { type RenderResult, getByRole, render, screen, waitFor } from '@testing-library/react'
+import { getByRole, screen, waitFor } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
 import './i18n'
 import { routeTree } from './routeTree.gen'
+import { type SetUpResult, setupComponentUnderTest } from './testUtils'
 
 describe('route', () => {
   const setup = async (initialPath: string) => {
@@ -18,14 +18,9 @@ describe('route', () => {
       }),
     })
 
-    userEvent.setup()
-    let rendered: RenderResult | null = null
+    let rendered: SetUpResult | null = null
     await waitFor(() => {
-      rendered = render(
-        <React.StrictMode>
-          <RouterProvider router={router} />
-        </React.StrictMode>,
-      )
+      rendered = setupComponentUnderTest(<RouterProvider router={router} />)
     })
     return rendered
   }
@@ -135,6 +130,38 @@ describe('route', () => {
       expect(
         screen.queryByText('Are you sure you want to discard your edits?'),
       ).not.toBeInTheDocument()
+    })
+
+    it('should update page when the OK button pressed after editing title', async () => {
+      // arrange
+      await setup('/')
+      await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
+      const titleTextField = screen.getByRole('textbox', { name: 'Title' })
+      await userEvent.clear(titleTextField)
+      await userEvent.type(titleTextField, 'FrontPage(updated)')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'OK' }))
+
+      // assert
+      expect(
+        await screen.findByRole('heading', { name: 'FrontPage(updated)', level: 2 }),
+      ).toBeInTheDocument()
+    })
+
+    it('should update page when the OK button pressed after editing content', async () => {
+      // arrange
+      await setup('/')
+      await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
+      const contentTextArea = screen.getByDisplayValue(/^&ldquo;swiki&rdquo;/)
+      await userEvent.clear(contentTextArea)
+      await userEvent.type(contentTextArea, 'Updated FrontPage content.')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'OK' }))
+
+      // assert
+      expect(await screen.findByText(/Updated FrontPage content\./)).toBeInTheDocument()
     })
   })
 })
