@@ -6,6 +6,10 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
+:root {
+  --gap-unit: 1.5rem;
+}
+
 html,
 body,
 div#root {

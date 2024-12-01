@@ -1,10 +1,9 @@
-import styled from '@emotion/styled'
+import { css } from '@emotion/react'
 import HomeIcon from '@mui/icons-material/Home'
 import ListIcon from '@mui/icons-material/List'
 import ListAltIcon from '@mui/icons-material/ListAlt'
 import {
   AppBar,
-  Box,
   Button,
   IconButton,
   Toolbar,
@@ -16,14 +15,14 @@ import { useTranslation } from 'react-i18next'
 
 import { Link } from '../adapters/Link'
 
-const LinkContent = styled.span`
-color: var(--AppBar-color);
-`
+const CSS_LINK_CONTAINER = css({
+  color: 'var(--AppBar-color)',
+})
 
-const MenuItemIconContainer = styled(LinkContent)`
-display: inline-block;
-padding-top: 6px;
-`
+const CSS_MENU_ITEM_ICON_CONTAINER = css({
+  display: 'inline-block',
+  paddingTop: '6px',
+})
 
 const MenuItem: React.FC<{
   to: string
@@ -33,18 +32,18 @@ const MenuItem: React.FC<{
   const theme = useTheme()
   const sm = useMediaQuery(theme.breakpoints.up('sm'))
 
-  return sm ? (
-    <Button variant="contained" disableElevation startIcon={icon}>
-      <Link to={to}>
-        <LinkContent>{children}</LinkContent>
-      </Link>
-    </Button>
-  ) : (
-    <IconButton aria-label={children}>
-      <Link to={to}>
-        <MenuItemIconContainer>{icon}</MenuItemIconContainer>
-      </Link>
-    </IconButton>
+  return (
+    <Link to={to}>
+      {sm ? (
+        <Button variant="contained" disableElevation startIcon={icon}>
+          <span css={CSS_LINK_CONTAINER}>{children}</span>
+        </Button>
+      ) : (
+        <IconButton aria-label={children}>
+          <span css={[CSS_LINK_CONTAINER, CSS_MENU_ITEM_ICON_CONTAINER]}>{icon}</span>
+        </IconButton>
+      )}
+    </Link>
   )
 }
 
@@ -56,27 +55,23 @@ export const TopAppBar: React.FC = (): JSX.Element => {
   const { t } = useTranslation()
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ paddingTop: 'env(safe-area-inset-top)' }}>
-        <Toolbar>
-          <Typography variant="h6" component="h1" sx={{ flexGrow: 1 }}>
-            swiki
-          </Typography>
-          <Box>
-            <nav>
-              <MenuItem to="/" icon={<HomeIcon />}>
-                FrontPage
-              </MenuItem>
-              <MenuItem to="/pages" icon={<ListIcon />}>
-                {t('Pages')}
-              </MenuItem>
-              <MenuItem to="/history" icon={<ListAltIcon />}>
-                History
-              </MenuItem>
-            </nav>
-          </Box>
-        </Toolbar>
-      </AppBar>
-    </Box>
+    <AppBar position="static" sx={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <Toolbar>
+        <Typography variant="h6" component="h1" sx={{ flexGrow: 1 }}>
+          swiki
+        </Typography>
+        <nav>
+          <MenuItem to="/" icon={<HomeIcon />}>
+            FrontPage
+          </MenuItem>
+          <MenuItem to="/pages" icon={<ListIcon />}>
+            {t('Pages')}
+          </MenuItem>
+          <MenuItem to="/history" icon={<ListAltIcon />}>
+            History
+          </MenuItem>
+        </nav>
+      </Toolbar>
+    </AppBar>
   )
 }

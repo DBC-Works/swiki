@@ -1,5 +1,4 @@
-import { useTranslation } from 'react-i18next'
-
+import { useFrontPagePresentation } from '../hooks/hooks'
 import { PageContentViewer } from '../molecules/PageContentViewer'
 import { Page } from '../templates/Page'
 
@@ -8,12 +7,13 @@ import { Page } from '../templates/Page'
  * @returns JSX Element
  */
 export const FrontPage: React.FC = (): JSX.Element => {
-  const { t } = useTranslation()
-  const frontPageContent = t('initialFrontPage')
+  const { title, language, content } = useFrontPagePresentation()
 
   return (
-    <Page>
-      <PageContentViewer>{frontPageContent}</PageContentViewer>
+    <Page pageTitle={title} returnPath="/">
+      <PageContentViewer lang={language} pageTitle={title}>
+        {content}
+      </PageContentViewer>
     </Page>
   )
 }
