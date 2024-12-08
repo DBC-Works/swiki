@@ -51,6 +51,21 @@ describe('route', () => {
     })
   })
 
+  describe('SandBox', () => {
+    it('should move to SandBox edit page when edit Fab pressed', async () => {
+      // arrange
+      await setup('/SandBox')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
+
+      // assert
+      expect(
+        screen.getByRole('heading', { name: 'Source - SandBox', level: 2 }),
+      ).toBeInTheDocument()
+    })
+  })
+
   describe('Edit page', () => {
     it('should move to FrontPage when FrontPage button in app bar pressed', async () => {
       // arrange
@@ -77,6 +92,31 @@ describe('route', () => {
       expect(
         await screen.findByRole('heading', { name: 'FrontPage', level: 2 }),
       ).toBeInTheDocument()
+    })
+
+    it('should move to FrontPage when SandBox button in app bar pressed', async () => {
+      // arrange
+      await setup('/pages/SandBox/edit')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'FrontPage' }))
+
+      // assert
+      expect(
+        await screen.findByRole('heading', { name: 'FrontPage', level: 2 }),
+      ).toBeInTheDocument()
+    })
+
+    it('should return to SandBox if moved from SandBox and click the cancel button without editing', async () => {
+      // arrange
+      await setup('/SandBox')
+      await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+      // assert
+      expect(await screen.findByRole('heading', { name: 'SandBox', level: 2 })).toBeInTheDocument()
     })
 
     it('should show confirmation dialog if click the cancel button with editing', async () => {
