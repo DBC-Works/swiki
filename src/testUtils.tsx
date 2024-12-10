@@ -1,7 +1,11 @@
 import { Provider } from 'jotai'
 import { useHydrateAtoms } from 'jotai/utils'
 import React from 'react'
+
 import './i18n'
+import { pageSetAtom } from './states/pages/atoms'
+import { pageSet } from './states/pages/states'
+import type { PageSet } from './states/pages/types'
 
 import { type RenderResult, render } from '@testing-library/react'
 import { type UserEvent, userEvent } from '@testing-library/user-event'
@@ -61,3 +65,19 @@ export const TestProvider = ({ initialValues, children }: JotaiPropsType): JSX.E
     <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
   </Provider>
 )
+
+/**
+ * Set up component with state provider under test
+ * @param component Component under test
+ * @param initialPageSet Initial page set
+ * @returns Set up result for test
+ */
+export const setupComponentWithStateProviderUnderTest = (
+  component: JSX.Element,
+  initialPageSet: PageSet | null = null,
+): SetUpResult =>
+  setupComponentUnderTest(
+    <TestProvider initialValues={[[pageSetAtom, initialPageSet ?? pageSet]]}>
+      {component}
+    </TestProvider>,
+  )

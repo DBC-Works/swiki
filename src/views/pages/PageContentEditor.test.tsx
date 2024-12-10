@@ -1,5 +1,3 @@
-import { pageSetAtom } from '../../states/pages/atoms'
-import { pageSet } from '../../states/pages/states'
 import type { PageData, PageSet } from '../../states/pages/types'
 import type { NonEmptyArray } from '../../types'
 import { PageContentEditor } from './PageContentEditor'
@@ -7,14 +5,13 @@ import { PageContentEditor } from './PageContentEditor'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
-import { TestProvider, setupComponentUnderTest } from '../../testUtils'
+import { setupComponentWithStateProviderUnderTest } from '../../testUtils'
 
 describe('PageContentEditor component', () => {
   const setup = (pageTitle: string, initialPageSet: PageSet | null = null) =>
-    setupComponentUnderTest(
-      <TestProvider initialValues={[[pageSetAtom, initialPageSet ?? pageSet]]}>
-        <PageContentEditor pageTitle={pageTitle} />
-      </TestProvider>,
+    setupComponentWithStateProviderUnderTest(
+      <PageContentEditor pageTitle={pageTitle} />,
+      initialPageSet,
     )
 
   beforeAll(() => {
