@@ -20,6 +20,7 @@ import { ModalOperationButtonsBar } from '../molecules/ModalOperationButtonsBar'
 import { PageContentViewer } from '../molecules/PageContentViewer'
 import { ConfirmationDialog } from '../organisms/ConfirmationDialog'
 import { Section } from '../templates/Section'
+import { getPageBrowsePath } from '../utils'
 
 const ID_TEXT_FIELD_TITLE = 'page-title-text-field'
 const ID_TEXT_AREA_CONTENT = 'page-content-text-area'
@@ -205,7 +206,7 @@ export const PageContentEditor: React.FC<Props> = ({ pageTitle }): JSX.Element =
   const pageEditSource = usePageEditSource(pageTitle)
   const language = pageEditSource?.pagePresentation?.language ?? i18n.language
   const content = pageEditSource?.pagePresentation?.content ?? ''
-  const viewerPath: ToPath = returnPath || `/pages/${pageTitle}`
+  const viewerPath: ToPath = returnPath || getPageBrowsePath(pageTitle)
 
   const [editing, setEditing] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
