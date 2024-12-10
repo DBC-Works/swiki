@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as SandBoxImport } from './routes/SandBox'
 import { Route as IndexImport } from './routes/index'
 import { Route as PagesIndexImport } from './routes/pages/index'
 import { Route as HistoryIndexImport } from './routes/history/index'
@@ -20,6 +21,12 @@ import { Route as PagesPageTitleDiffIndexImport } from './routes/pages/$pageTitl
 import { Route as PagesPageTitleDiffNumberImport } from './routes/pages/$pageTitle/diff/$number'
 
 // Create/Update Routes
+
+const SandBoxRoute = SandBoxImport.update({
+  id: '/SandBox',
+  path: '/SandBox',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -74,6 +81,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/SandBox': {
+      id: '/SandBox'
+      path: '/SandBox'
+      fullPath: '/SandBox'
+      preLoaderRoute: typeof SandBoxImport
+      parentRoute: typeof rootRoute
+    }
     '/history/': {
       id: '/history/'
       path: '/history'
@@ -123,6 +137,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/SandBox': typeof SandBoxRoute
   '/history': typeof HistoryIndexRoute
   '/pages': typeof PagesIndexRoute
   '/pages/$pageTitle/edit': typeof PagesPageTitleEditRoute
@@ -133,6 +148,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/SandBox': typeof SandBoxRoute
   '/history': typeof HistoryIndexRoute
   '/pages': typeof PagesIndexRoute
   '/pages/$pageTitle/edit': typeof PagesPageTitleEditRoute
@@ -144,6 +160,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/SandBox': typeof SandBoxRoute
   '/history/': typeof HistoryIndexRoute
   '/pages/': typeof PagesIndexRoute
   '/pages/$pageTitle/edit': typeof PagesPageTitleEditRoute
@@ -156,6 +173,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/SandBox'
     | '/history'
     | '/pages'
     | '/pages/$pageTitle/edit'
@@ -165,6 +183,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/SandBox'
     | '/history'
     | '/pages'
     | '/pages/$pageTitle/edit'
@@ -174,6 +193,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/SandBox'
     | '/history/'
     | '/pages/'
     | '/pages/$pageTitle/edit'
@@ -185,6 +205,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SandBoxRoute: typeof SandBoxRoute
   HistoryIndexRoute: typeof HistoryIndexRoute
   PagesIndexRoute: typeof PagesIndexRoute
   PagesPageTitleEditRoute: typeof PagesPageTitleEditRoute
@@ -195,6 +216,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SandBoxRoute: SandBoxRoute,
   HistoryIndexRoute: HistoryIndexRoute,
   PagesIndexRoute: PagesIndexRoute,
   PagesPageTitleEditRoute: PagesPageTitleEditRoute,
@@ -216,6 +238,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/SandBox",
         "/history/",
         "/pages/",
         "/pages/$pageTitle/edit",
@@ -226,6 +249,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/SandBox": {
+      "filePath": "SandBox.tsx"
     },
     "/history/": {
       "filePath": "history/index.tsx"

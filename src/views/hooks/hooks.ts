@@ -8,28 +8,18 @@ import {
   sandBoxAtom,
 } from '../../states/pages/atoms'
 import { type PageEditSource, type PagePresentation, PageTypes } from '../../states/pages/types'
+import { getTitleToDisplay } from '../i18n'
 
 /**
  * Get latest page titles hook
  * @returns Latest page title set
  */
 export const usePageTitles = (): Set<string> => {
-  const { t } = useTranslation()
   const pageTitles = useAtomValue(latestPageTitlesAtom)
 
   return new Set(
     pageTitles
-      .map(({ type, title }) => {
-        if (title === null) {
-          switch (type) {
-            case PageTypes.FrontPage:
-              return t('FrontPage')
-            case PageTypes.SandBox:
-              return t('SandBox')
-          }
-        }
-        return title ?? ''
-      })
+      .map(({ type, title }) => getTitleToDisplay(type, title))
       .filter((title) => 0 < title.length),
   )
 }

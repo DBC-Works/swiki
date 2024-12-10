@@ -66,6 +66,30 @@ describe('route', () => {
     })
   })
 
+  describe('Pages', () => {
+    it('should move to FrontPage when FrontPage button in page list pressed', async () => {
+      // arrange
+      await setup('/pages')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: /^FrontPage.+$/ }))
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'FrontPage', level: 2 })).toBeInTheDocument()
+    })
+
+    it('should move to SandBox when SandBox button in page list pressed', async () => {
+      // arrange
+      await setup('/pages')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: /^SandBox.+$/ }))
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'SandBox', level: 2 })).toBeInTheDocument()
+    })
+  })
+
   describe('Edit page', () => {
     it('should move to FrontPage when FrontPage button in app bar pressed', async () => {
       // arrange

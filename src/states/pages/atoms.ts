@@ -78,6 +78,17 @@ export const sandBoxAtom = atom((get) => {
 })
 
 /**
+ * Page list read-only atom
+ */
+export const pageListAtom = atom((get) =>
+  getFlattenPageList(get(pageSetAtom)).map(({ type, page }) => ({
+    type,
+    page: getLatestPageDataFrom(page) ?? null,
+    updateCount: page?.pageDataHistory.length ?? null,
+  })),
+)
+
+/**
  * Page edit sources read-only atom
  */
 export const pageEditSourcesAtom = atom((get) => getPageEditSources(get(pageSetAtom)))
