@@ -1,7 +1,5 @@
 import { css } from '@emotion/react'
 
-import { EditFab } from '../atoms/EditFab'
-
 const CSS_FAB_CONTAINER = css({
   display: 'flex',
   justifyContent: 'flex-end',
@@ -11,20 +9,14 @@ const CSS_FAB_CONTAINER = css({
   right: 'var(--gap-unit)',
 })
 
-type Props = React.ComponentProps<'div'> & {
-  pageTitle: string
-  returnPath?: string | undefined
-}
+type Props = React.ComponentProps<'div'>
 
 /**
  * Fab container component
  * @param props Props
- * @param props.pageTitle Page title to edit
- * @param props.returnPath Path to return
+ * @param props.children Fab
  * @returns JSX Element
  */
-export const FabContainer: React.FC<Props> = ({ pageTitle, returnPath }): JSX.Element => (
-  <div css={CSS_FAB_CONTAINER}>
-    <EditFab pageTitle={pageTitle} returnPath={returnPath} />
-  </div>
+export const FabContainer: React.FC<Props> = ({ children }): JSX.Element => (
+  <div css={CSS_FAB_CONTAINER}>{children}</div>
 )

@@ -1,11 +1,6 @@
-import { css } from '@emotion/react'
-
+import { EditFab } from '../atoms/EditFab'
 import { FabContainer } from '../organisms/FabContainer'
 import { Section } from '../templates/Section'
-
-const CSS_SECTION = css({
-  paddingBottom: '6rem',
-})
 
 type Props = React.ComponentProps<'section'> & {
   pageTitle: string
@@ -21,8 +16,10 @@ type Props = React.ComponentProps<'section'> & {
  * @returns JSX element
  */
 export const Page: React.FC<Props> = ({ pageTitle, returnPath, children }) => (
-  <Section css={CSS_SECTION}>
+  <Section>
     {children}
-    <FabContainer pageTitle={pageTitle} returnPath={returnPath} />
+    <FabContainer>
+      <EditFab pageTitle={pageTitle} returnPath={returnPath} />
+    </FabContainer>
   </Section>
 )
