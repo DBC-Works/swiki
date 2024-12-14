@@ -6,7 +6,7 @@ import { type PageType, PageTypes } from '../states/pages/types'
  * @returns page browse path
  */
 export const getPageBrowsePath = (pageTitle: string): string =>
-  `pages/${encodeURIComponent(pageTitle)}`
+  `/pages/${encodeURIComponent(pageTitle)}`
 
 /**
  * Get specified page browse path
