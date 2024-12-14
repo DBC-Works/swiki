@@ -1,20 +1,12 @@
 import { screen } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { setupComponentUnderTest } from '../../testUtils'
-import { mockLinkAdapter } from '../testUtils'
+vi.mock('../adapters/Link')
 
 import { TopAppBar } from './TopAppBar'
 
 describe('TopAppBar component', () => {
   const setup = () => setupComponentUnderTest(<TopAppBar />)
-
-  beforeEach(() => {
-    mockLinkAdapter()
-  })
-  afterEach(() => {
-    vi.resetAllMocks()
-    vi.restoreAllMocks()
-  })
 
   it('should have the application title', () => {
     // arrange

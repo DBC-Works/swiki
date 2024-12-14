@@ -1,11 +1,13 @@
 import type { PageData, PageSet } from '../../states/pages/types'
 import type { NonEmptyArray } from '../../types'
-import { PageContentEditor } from './PageContentEditor'
 
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeAll, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { setupComponentWithStateProviderUnderTest } from '../../testUtils'
+vi.mock('../adapters/hooks.ts')
+
+import { PageContentEditor } from './PageContentEditor'
 
 describe('PageContentEditor component', () => {
   const setup = (pageTitle: string, initialPageSet: PageSet | null = null) =>
@@ -13,19 +15,6 @@ describe('PageContentEditor component', () => {
       <PageContentEditor pageTitle={pageTitle} />,
       initialPageSet,
     )
-
-  beforeAll(() => {
-    vi.mock('../adapters/hooks.ts', () => {
-      return {
-        useReturnPath: () => {
-          return () => '/'
-        },
-        useMoveTo: () => {
-          return () => {}
-        },
-      }
-    })
-  })
 
   it('should set default page presentation data to edit on first time to edit FrontPage', () => {
     // arrange && act
