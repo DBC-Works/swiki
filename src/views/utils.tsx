@@ -1,4 +1,4 @@
-import { type PageType, PageTypes } from '../states/pages/types'
+import { type PageType, PageTypes, PathTypes } from '../states/pages/types'
 
 /**
  * Get page browse path
@@ -17,9 +17,9 @@ export const getPageBrowsePath = (pageTitle: string): string =>
 export const getSpecifiedPageBrowsePath = (type: PageType, pageTitle: string | null): string => {
   switch (type) {
     case PageTypes.FrontPage:
-      return '/'
+      return PathTypes.FrontPage
     case PageTypes.SandBox:
-      return '/SandBox'
+      return PathTypes.SandBox
     default:
       if (pageTitle === null) {
         throw new Error('no page title')

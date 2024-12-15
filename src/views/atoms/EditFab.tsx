@@ -3,6 +3,7 @@ import { Fab } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
 import { Link, type ToPath } from '../adapters/Link'
+import { getPageBrowsePath } from '../utils'
 
 type Props = React.ComponentProps<typeof Fab> & {
   pageTitle: string
@@ -20,7 +21,7 @@ export const EditFab: React.FC<Props> = ({ pageTitle, returnPath }): JSX.Element
   const { t } = useTranslation()
 
   return (
-    <Link to={`/pages/${pageTitle}/edit`} returnPath={returnPath}>
+    <Link to={`${getPageBrowsePath(pageTitle)}/edit`} returnPath={returnPath}>
       <Fab color="primary" aria-label={t('Edit')}>
         <EditIcon />
       </Fab>

@@ -105,3 +105,34 @@ export type PageEditSource = {
    */
   pagePresentation: PagePresentation | null
 }
+
+/**
+ * Path type
+ */
+export const PathTypes = {
+  /**
+   * FrontPage
+   */
+  FrontPage: '/',
+
+  /**
+   * SandBox
+   */
+  SandBox: '/SandBox',
+
+  /**
+   * NewPage
+   */
+  NewPage: '/NewPage',
+
+  /**
+   * Page list
+   */
+  Pages: '/pages',
+
+  /**
+   * History
+   */
+  History: '/history',
+} as const satisfies Record<string, string>
+export type PathType = (typeof PathTypes)[keyof typeof PathTypes]

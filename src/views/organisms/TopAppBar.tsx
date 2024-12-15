@@ -13,6 +13,7 @@ import {
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
+import { PathTypes } from '../../states/pages/types'
 import { Link } from '../adapters/Link'
 
 const CSS_LINK_CONTAINER = css({
@@ -61,13 +62,13 @@ export const TopAppBar: React.FC = (): JSX.Element => {
           swiki
         </Typography>
         <nav>
-          <MenuItem to="/" icon={<HomeIcon />}>
+          <MenuItem to={PathTypes.FrontPage} icon={<HomeIcon />}>
             FrontPage
           </MenuItem>
-          <MenuItem to="/pages" icon={<ListIcon />}>
+          <MenuItem to={PathTypes.Pages} icon={<ListIcon />}>
             {t('Pages')}
           </MenuItem>
-          <MenuItem to="/history" icon={<ListAltIcon />}>
+          <MenuItem to={PathTypes.History} icon={<ListAltIcon />}>
             History
           </MenuItem>
         </nav>
