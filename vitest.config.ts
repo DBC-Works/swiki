@@ -28,7 +28,7 @@ export default defineConfig({
     ],
     coverage: {
       exclude: [
-        '__mock__',
+        '__mocks__',
         '**/types.ts',
         './vite-env.d.ts',
         './setupTest.d.ts',
