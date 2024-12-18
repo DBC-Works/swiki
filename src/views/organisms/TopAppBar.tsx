@@ -12,7 +12,7 @@ import {
   useTheme,
 } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { type MouseEventHandler, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { clearEditingInfoAtom, editingInfoAtom } from '../../states/edit/atoms'
