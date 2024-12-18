@@ -14,6 +14,7 @@ describe('PageContentEditor component', () => {
     setupComponentWithStateProviderUnderTest(
       <PageContentEditor pageTitle={pageTitle} />,
       initialPageSet,
+      null,
     )
 
   it('should set default page presentation data to edit on first time to edit FrontPage', () => {
@@ -63,13 +64,13 @@ describe('PageContentEditor component', () => {
               language: 'en',
               title: 'Latest page',
               content: 'Latest page content',
-              dateAndTime: '21001231T000000Z',
+              dateAndTime: '2100-12-31T00:00:00Z',
             },
             {
               language: 'en',
               title: 'First page',
               content: 'First page content',
-              dateAndTime: '21000101T000000Z',
+              dateAndTime: '2100-01-01T00:00:00Z',
             },
           ] as NonEmptyArray<PageData>,
         },

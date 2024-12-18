@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import { InputLabel, Tab, Tabs, TextField } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import { useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import {
   type ChangeEvent,
   type ChangeEventHandler,
@@ -12,13 +12,15 @@ import {
 } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { clearEditingInfoAtom, editingInfoAtom, setEditingInfoAtom } from '../../states/edit/atoms'
 import { addPageDataAtom } from '../../states/pages/atoms'
+import { type PageEditSource, PageTypes, PathTypes } from '../../states/pages/types'
 import type { ToPath } from '../adapters/Link'
 import { useMoveTo, useReturnPath } from '../adapters/hooks'
 import { usePageEditSource, useUsableTitle } from '../hooks/hooks'
 import { ModalOperationButtonsBar } from '../molecules/ModalOperationButtonsBar'
 import { PageContentViewer } from '../molecules/PageContentViewer'
-import { ConfirmationDialog } from '../organisms/ConfirmationDialog'
+import { DiscardConfirmationDialog } from '../organisms/DiscardConfirmationDialog'
 import { Section } from '../templates/Section'
 import { getPageBrowsePath } from '../utils'
 
@@ -179,6 +181,29 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ lang, pageContent, onChan
   )
 }
 
+type EditPageHeadingProps = { pageTitle: string; editing: boolean }
+
+const EditPageHeading: React.FC<EditPageHeadingProps> = ({ pageTitle, editing }) => {
+  const { t } = useTranslation()
+  return (
+    <>
+      {t('Source')} - {pageTitle}
+      {editing && '('}
+      {editing && (
+        <output htmlFor={`${ID_TEXT_FIELD_TITLE} ${ID_TEXT_AREA_CONTENT}`}>editing</output>
+      )}
+      {editing && ')'}
+    </>
+  )
+}
+
+const getPagePresentationInfo = (pageEditSource: PageEditSource | null, language: string) => ({
+  id: pageEditSource?.id,
+  type: pageEditSource?.type ?? PageTypes.Content,
+  language: pageEditSource?.pagePresentation?.language ?? language,
+  content: pageEditSource?.pagePresentation?.content ?? '',
+})
+
 const CSS_SECTION = css({
   display: 'flex',
   flexDirection: 'column',
@@ -188,7 +213,7 @@ const CSS_SECTION = css({
 })
 
 type Props = React.ComponentProps<typeof Section> & {
-  pageTitle: string
+  pageTitle?: string
 }
 
 /**
@@ -199,22 +224,22 @@ type Props = React.ComponentProps<typeof Section> & {
  */
 export const PageContentEditor: React.FC<Props> = ({ pageTitle }): JSX.Element => {
   const { t, i18n } = useTranslation()
-  const addPageData = useSetAtom(addPageDataAtom)
-
   const moveTo = useMoveTo()
   const returnPath = useReturnPath()
-  const pageEditSource = usePageEditSource(pageTitle)
-  const language = pageEditSource?.pagePresentation?.language ?? i18n.language
-  const content = pageEditSource?.pagePresentation?.content ?? ''
-  const viewerPath: ToPath = returnPath || getPageBrowsePath(pageTitle)
+  const addPageData = useSetAtom(addPageDataAtom)
+  const clearEditingInfo = useSetAtom(clearEditingInfoAtom)
+  const isEditMode = pageTitle ? 0 < pageTitle.length : false
 
-  const [editing, setEditing] = useState(false)
+  const pageEditSource = isEditMode ? usePageEditSource(pageTitle as string) : null
+  const { id, type, language, content } = getPagePresentationInfo(pageEditSource, i18n.language)
+
+  const { editing } = useAtomValue(editingInfoAtom)
+  const setEditingInfo = useSetAtom(setEditingInfoAtom)
   const [showConfirm, setShowConfirm] = useState(false)
-  const [editingTitle, setEditingTitle] = useState(pageTitle)
-  const editingContent = useRef({ type: pageEditSource?.type, content })
+  const [editingTitle, setEditingTitle] = useState(isEditMode ? (pageTitle as string) : '')
+  const editingContent = useRef({ content })
 
-  const isTitleUsable = useUsableTitle(pageTitle, editingTitle)
-
+  const isTitleUsable = useUsableTitle(pageTitle ?? '', editingTitle)
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (editing) {
@@ -236,11 +261,11 @@ export const PageContentEditor: React.FC<Props> = ({ pageTitle }): JSX.Element =
         setEditingTitle(value)
         const updated = pageTitle !== value || editingContent.current.content !== content
         if (updated !== editing) {
-          setEditing(updated)
+          setEditingInfo(updated)
         }
       }
     },
-    [content, editing, editingTitle, pageTitle],
+    [content, editing, editingTitle, pageTitle, setEditingInfo],
   )
   const handleChangeContent = useCallback(
     (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -249,53 +274,61 @@ export const PageContentEditor: React.FC<Props> = ({ pageTitle }): JSX.Element =
         editingContent.current.content = value
         const updated = editingTitle !== pageTitle || editingContent.current.content !== content
         if (updated !== editing) {
-          setEditing(updated)
+          setEditingInfo(updated)
         }
       }
     },
-    [content, editing, editingTitle, pageTitle],
+    [content, editing, editingTitle, pageTitle, setEditingInfo],
   )
 
+  const decidePath = (path: string) => {
+    return isEditMode ? (returnPath ?? getPageBrowsePath(pageTitle as string)) : path
+  }
+
+  const sourcePath: ToPath = decidePath(PathTypes.Pages)
   const handleClickCancel = useCallback(() => {
     if (editing) {
       setShowConfirm(true)
     } else {
-      moveTo(viewerPath)
+      moveTo(sourcePath)
     }
-  }, [editing, moveTo, viewerPath])
+  }, [editing, moveTo, sourcePath])
+  const handleClickConfirmOK = useCallback(() => {
+    clearEditingInfo()
+    setShowConfirm(false)
+    moveTo(sourcePath)
+  }, [clearEditingInfo, moveTo, sourcePath])
+  const handleClickConfirmCancel = useCallback(() => {
+    setShowConfirm(false)
+  }, [])
+
+  const pagePath: ToPath = decidePath(getPageBrowsePath(editingTitle))
   const handleClickOK = useCallback(() => {
     if (editing) {
       addPageData(
-        pageEditSource.type,
-        pageEditSource.id,
+        type,
+        id ?? crypto.randomUUID(),
         language,
         editingTitle,
         editingContent.current.content,
       )
     }
-    moveTo(viewerPath)
-  }, [addPageData, editing, editingTitle, language, moveTo, pageEditSource, viewerPath])
-  const handleClickConfirmOk = useCallback(() => {
-    moveTo(viewerPath)
-  }, [moveTo, viewerPath])
-  const handleClickConfirmCancel = useCallback(() => {
-    setShowConfirm(false)
-  }, [])
+    moveTo(pagePath)
+  }, [addPageData, editing, editingTitle, id, language, moveTo, pagePath, type])
 
   return (
     <Section css={CSS_SECTION} fitToContentArea={true}>
       <h2>
-        {t('Source')} - {pageTitle}
-        {editing && '('}
-        {editing && (
-          <output htmlFor={`${ID_TEXT_FIELD_TITLE} ${ID_TEXT_AREA_CONTENT}`}>editing</output>
+        {isEditMode ? (
+          <EditPageHeading pageTitle={pageTitle as string} editing={editing} />
+        ) : (
+          t('New page')
         )}
-        {editing && ')'}
       </h2>
       <TitleEditor
         lang={language}
         title={editingTitle}
-        isTitleUsable={isTitleUsable}
+        isTitleUsable={isTitleUsable || (isEditMode === false && editingTitle.length === 0)}
         onChange={handleChangeTitle}
       />
       <ContentEditor lang={language} pageContent={content} onChange={handleChangeContent} />
@@ -305,12 +338,10 @@ export const PageContentEditor: React.FC<Props> = ({ pageTitle }): JSX.Element =
         onClickOK={handleClickOK}
       />
       {showConfirm && (
-        <ConfirmationDialog
+        <DiscardConfirmationDialog
           onClickCancel={handleClickConfirmCancel}
-          onClickOK={handleClickConfirmOk}
-        >
-          {t('Are you sure you want to discard your edits?')}
-        </ConfirmationDialog>
+          onClickOK={handleClickConfirmOK}
+        />
       )}
     </Section>
   )

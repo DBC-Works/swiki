@@ -6,7 +6,9 @@ import { useTranslation } from 'react-i18next'
 
 import { pageListAtom } from '../../states/pages/atoms'
 import { useMoveTo } from '../adapters/hooks'
+import { AddPageFab } from '../atoms/AddPageFab'
 import { formatPageUpdateInfo, getLanguage, getTitleToDisplay } from '../i18n'
+import { FabContainer } from '../organisms/FabContainer'
 import { Section } from '../templates/Section'
 import { getSpecifiedPageBrowsePath } from '../utils'
 
@@ -49,7 +51,7 @@ export const Pages: React.FC = (): JSX.Element => {
   return (
     <Section>
       <h2 lang={i18n.language}>{t('Pages')}</h2>
-      <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+      <List sx={{ width: '100%' }}>
         {pages.map(({ path, title, language, updateInfo }) => (
           <ListItemButton
             key={title}
@@ -70,6 +72,9 @@ export const Pages: React.FC = (): JSX.Element => {
           </ListItemButton>
         ))}
       </List>
+      <FabContainer>
+        <AddPageFab />
+      </FabContainer>
     </Section>
   )
 }

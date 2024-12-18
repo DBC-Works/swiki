@@ -1,6 +1,8 @@
-import { useNavigate, useRouterState } from '@tanstack/react-router'
+import { useNavigate, useParams, useRouterState } from '@tanstack/react-router'
 
 import type { ToPath } from './Link'
+
+export const useRouterParams = useParams
 
 /**
  * Get return path from history state

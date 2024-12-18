@@ -9,7 +9,7 @@ import { PageContentEditor } from '../../../views/pages/PageContentEditor'
 const PageEdit: React.FC = (): JSX.Element => {
   const { pageTitle } = useParams({ from: '/pages/$pageTitle/edit' })
 
-  return <PageContentEditor pageTitle={pageTitle} />
+  return <PageContentEditor pageTitle={decodeURIComponent(pageTitle)} />
 }
 
 /**

@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as SandBoxImport } from './routes/SandBox'
+import { Route as NewPageImport } from './routes/NewPage'
 import { Route as IndexImport } from './routes/index'
 import { Route as PagesIndexImport } from './routes/pages/index'
 import { Route as HistoryIndexImport } from './routes/history/index'
@@ -25,6 +26,12 @@ import { Route as PagesPageTitleDiffNumberImport } from './routes/pages/$pageTit
 const SandBoxRoute = SandBoxImport.update({
   id: '/SandBox',
   path: '/SandBox',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const NewPageRoute = NewPageImport.update({
+  id: '/NewPage',
+  path: '/NewPage',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -79,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/NewPage': {
+      id: '/NewPage'
+      path: '/NewPage'
+      fullPath: '/NewPage'
+      preLoaderRoute: typeof NewPageImport
       parentRoute: typeof rootRoute
     }
     '/SandBox': {
@@ -137,6 +151,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/NewPage': typeof NewPageRoute
   '/SandBox': typeof SandBoxRoute
   '/history': typeof HistoryIndexRoute
   '/pages': typeof PagesIndexRoute
@@ -148,6 +163,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/NewPage': typeof NewPageRoute
   '/SandBox': typeof SandBoxRoute
   '/history': typeof HistoryIndexRoute
   '/pages': typeof PagesIndexRoute
@@ -160,6 +176,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/NewPage': typeof NewPageRoute
   '/SandBox': typeof SandBoxRoute
   '/history/': typeof HistoryIndexRoute
   '/pages/': typeof PagesIndexRoute
@@ -173,6 +190,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/NewPage'
     | '/SandBox'
     | '/history'
     | '/pages'
@@ -183,6 +201,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/NewPage'
     | '/SandBox'
     | '/history'
     | '/pages'
@@ -193,6 +212,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/NewPage'
     | '/SandBox'
     | '/history/'
     | '/pages/'
@@ -205,6 +225,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  NewPageRoute: typeof NewPageRoute
   SandBoxRoute: typeof SandBoxRoute
   HistoryIndexRoute: typeof HistoryIndexRoute
   PagesIndexRoute: typeof PagesIndexRoute
@@ -216,6 +237,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  NewPageRoute: NewPageRoute,
   SandBoxRoute: SandBoxRoute,
   HistoryIndexRoute: HistoryIndexRoute,
   PagesIndexRoute: PagesIndexRoute,
@@ -238,6 +260,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/NewPage",
         "/SandBox",
         "/history/",
         "/pages/",
@@ -249,6 +272,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/NewPage": {
+      "filePath": "NewPage.tsx"
     },
     "/SandBox": {
       "filePath": "SandBox.tsx"

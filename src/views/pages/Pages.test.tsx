@@ -1,33 +1,23 @@
 import type { PageSet } from '../../states/pages/types'
-import { Pages } from './Pages'
 
 import { screen } from '@testing-library/react'
-import { beforeAll, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { setupComponentWithStateProviderUnderTest } from '../../testUtils'
+vi.mock('../adapters/hooks.ts')
+vi.mock('../adapters/Link')
+
+import { Pages } from './Pages'
 
 describe('Pages component', () => {
   const setup = (initialPageSet: PageSet | null = null) =>
-    setupComponentWithStateProviderUnderTest(<Pages />, initialPageSet)
-
-  beforeAll(() => {
-    vi.mock('../adapters/hooks.ts', () => {
-      return {
-        useReturnPath: () => {
-          return () => '/'
-        },
-        useMoveTo: () => {
-          return () => {}
-        },
-      }
-    })
-  })
+    setupComponentWithStateProviderUnderTest(<Pages />, initialPageSet, null)
 
   it('should list up "FrontPage" and "SandBox" as items without update information if no page data', () => {
     // arrange & act
     setup()
 
     // assert
-    expect(screen.getAllByRole('button')).toHaveLength(2)
+    expect(screen.getAllByRole('button')).toHaveLength(3)
     expect(screen.getByRole('button', { name: /^FrontPage.+-$/ })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /^SandBox.+-$/ })).toBeInTheDocument()
   })
@@ -79,7 +69,7 @@ describe('Pages component', () => {
     })
 
     // assert
-    expect(screen.getAllByRole('button')).toHaveLength(3)
+    expect(screen.getAllByRole('button')).toHaveLength(4)
     expect(
       screen.getByRole('button', {
         name: /^FrontPage\(Updated\).+1st update on Jan 1, 2024 12:34 PM$/,

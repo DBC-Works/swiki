@@ -89,6 +89,13 @@ export const pageListAtom = atom((get) =>
 )
 
 /**
+ * Latest pages(without special pages) read-only atom
+ */
+export const latestPagesAtom = atom((get) =>
+  get(pageSetAtom).pages.map((page) => getLatestPageDataFrom(page)),
+)
+
+/**
  * Page edit sources read-only atom
  */
 export const pageEditSourcesAtom = atom((get) => getPageEditSources(get(pageSetAtom)))
@@ -106,7 +113,7 @@ export const latestPageTitlesAtom = atom((get) =>
 )
 
 /**
- * Add page data atom
+ * Add page data write-only atom
  */
 export const addPageDataAtom = atom(
   null,
