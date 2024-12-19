@@ -6,10 +6,12 @@ import { describe, expect, it } from 'vitest'
 
 import './i18n'
 import { routeTree } from './routeTree.gen'
-import { type SetUpResult, setupComponentUnderTest } from './testUtils'
+import type { PageData, PageSet } from './states/pages/types'
+import { type SetUpResult, setupComponentWithStateProviderUnderTest } from './testUtils'
+import type { NonEmptyArray } from './types'
 
 describe('route', () => {
-  const setup = async (initialPath: string) => {
+  const setup = async (initialPath: string, initialPageSet: PageSet | null = null) => {
     const router = createRouter({
       routeTree,
       defaultNotFoundComponent: () => <h2>Not found</h2>,
@@ -20,7 +22,11 @@ describe('route', () => {
 
     let rendered: SetUpResult | null = null
     await waitFor(() => {
-      rendered = setupComponentUnderTest(<RouterProvider router={router} />)
+      rendered = setupComponentWithStateProviderUnderTest(
+        <RouterProvider router={router} />,
+        initialPageSet,
+        null,
+      )
     })
     return rendered
   }
@@ -49,10 +55,222 @@ describe('route', () => {
         screen.getByRole('heading', { name: 'Source - FrontPage', level: 2 }),
       ).toBeInTheDocument()
     })
+
+    it('should move to page list page when Pages button in app bar is pressed', async () => {
+      // arrange
+      await setup('/')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'Pages' }))
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'Pages', level: 2 })).toBeInTheDocument()
+    })
+  })
+
+  describe('SandBox', () => {
+    it('should move to FrontPage page when Pages button in app bar is pressed', async () => {
+      // arrange
+      await setup('/SandBox')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'FrontPage' }))
+
+      // assert
+      expect(
+        await screen.findByRole('heading', { name: 'FrontPage', level: 2 }),
+      ).toBeInTheDocument()
+    })
+
+    it('should move to page list page when Pages button in app bar is pressed', async () => {
+      // arrange
+      await setup('/SandBox')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'Pages' }))
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'Pages', level: 2 })).toBeInTheDocument()
+    })
+
+    it('should move to SandBox edit page when edit Fab is pressed', async () => {
+      // arrange
+      await setup('/SandBox')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
+
+      // assert
+      expect(
+        screen.getByRole('heading', { name: 'Source - SandBox', level: 2 }),
+      ).toBeInTheDocument()
+    })
+  })
+
+  describe('Pages', () => {
+    it('should move to FrontPage page when Pages button in app bar is pressed', async () => {
+      // arrange
+      await setup('/pages')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'FrontPage' }))
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'FrontPage', level: 2 })).toBeInTheDocument()
+    })
+
+    it('should move to FrontPage when FrontPage button in page list is pressed', async () => {
+      // arrange
+      await setup('/pages')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: /^FrontPage.+$/ }))
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'FrontPage', level: 2 })).toBeInTheDocument()
+    })
+
+    it('should move to SandBox when SandBox button in page list is pressed', async () => {
+      // arrange
+      await setup('/pages')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: /^SandBox.+$/ }))
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'SandBox', level: 2 })).toBeInTheDocument()
+    })
+
+    it('should move to content page when content button in page list is pressed', async () => {
+      // arrange
+      const initialPageSet = {
+        frontPage: null,
+        sandBox: null,
+        pages: [
+          {
+            id: crypto.randomUUID(),
+            pageDataHistory: [
+              {
+                language: 'en',
+                title: 'Content page',
+                content: 'Content page content',
+                dateAndTime: '2025-01-01T00:00:00Z',
+              },
+            ] as NonEmptyArray<PageData>,
+          },
+        ],
+      }
+      await setup('/pages', initialPageSet)
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: /^Content page.+$/ }))
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'Content page', level: 2 })).toBeInTheDocument()
+    })
+
+    it('should move to add new page when add Fab is pressed', async () => {
+      // arrange
+      await setup('/pages')
+
+      // act
+      await userEvent.click(screen.getByLabelText('Add new page'))
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'New page', level: 2 })).toBeInTheDocument()
+    })
+  })
+
+  describe('Content page', () => {
+    const initialPageSet = {
+      frontPage: null,
+      sandBox: null,
+      pages: [
+        {
+          id: crypto.randomUUID(),
+          pageDataHistory: [
+            {
+              language: 'en',
+              title: 'Content page',
+              content: 'Content page content',
+              dateAndTime: '2025-01-01T00:00:00Z',
+            },
+          ] as NonEmptyArray<PageData>,
+        },
+      ],
+    }
+
+    it('should move to FrontPage page when Pages button in app bar is pressed', async () => {
+      // arrange
+      await setup('/pages/Content%20page', initialPageSet)
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'FrontPage' }))
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'FrontPage', level: 2 })).toBeInTheDocument()
+    })
+
+    it('should move to page list page if there is no page with the specified title', async () => {
+      // arrange & act
+      await setup('/pages/NotExist', initialPageSet)
+
+      // assert
+      expect(await screen.findByRole('heading', { name: 'Pages', level: 2 })).toBeInTheDocument()
+    })
+  })
+
+  describe('Add new page', () => {
+    it('should move to FrontPage when FrontPage button in app bar is pressed without editing', async () => {
+      // arrange
+      await setup('/NewPage')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'FrontPage' }))
+
+      // assert
+      expect(
+        await screen.findByRole('heading', { name: 'FrontPage', level: 2 }),
+      ).toBeInTheDocument()
+    })
+
+    it('should move to page list page when Pages button in app bar is pressed without editing', async () => {
+      // arrange
+      await setup('/NewPage')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'Pages' }))
+
+      // assert
+      expect(await screen.findByRole('heading', { name: 'Pages', level: 2 })).toBeInTheDocument()
+    })
+
+    it('should return to page list page when the cancel button is pressed without editing', async () => {
+      // arrange
+      await setup('/NewPage')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+      // assert
+      expect(await screen.findByRole('heading', { name: 'Pages', level: 2 })).toBeInTheDocument()
+    })
+
+    it('should move to added page when the OK button is pressed with editing', async () => {
+      // arrange
+      await setup('/NewPage')
+
+      // act
+      await userEvent.type(screen.getByRole('textbox', { name: 'Title' }), 'New page')
+      await userEvent.click(screen.getByRole('button', { name: 'OK' }))
+
+      // assert
+      expect(await screen.findByRole('heading', { name: 'New page', level: 2 })).toBeInTheDocument()
+    })
   })
 
   describe('Edit page', () => {
-    it('should move to FrontPage when FrontPage button in app bar pressed', async () => {
+    it('should move to FrontPage when FrontPage button in app bar is pressed', async () => {
       // arrange
       await setup('/pages/FrontPage/edit')
 
@@ -79,6 +297,31 @@ describe('route', () => {
       ).toBeInTheDocument()
     })
 
+    it('should move to FrontPage when SandBox button in app bar is pressed', async () => {
+      // arrange
+      await setup('/pages/SandBox/edit')
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'FrontPage' }))
+
+      // assert
+      expect(
+        await screen.findByRole('heading', { name: 'FrontPage', level: 2 }),
+      ).toBeInTheDocument()
+    })
+
+    it('should return to SandBox if moved from SandBox and click the cancel button without editing', async () => {
+      // arrange
+      await setup('/SandBox')
+      await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+      // assert
+      expect(await screen.findByRole('heading', { name: 'SandBox', level: 2 })).toBeInTheDocument()
+    })
+
     it('should show confirmation dialog if click the cancel button with editing', async () => {
       // arrange
       await setup('/')
@@ -94,7 +337,7 @@ describe('route', () => {
       ).toBeInTheDocument()
     })
 
-    it('should discard editing content and move back to from page if the OK button in the confirmation dialog is clicked.', async () => {
+    it('should discard editing content and move back to from page if the OK button in the confirmation dialog is pressed.', async () => {
       // arrange
       await setup('/')
       await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
@@ -113,7 +356,7 @@ describe('route', () => {
       ).not.toBeInTheDocument()
     })
 
-    it('should dismiss confirmation dialog if the cancel button in the confirmation dialog is clicked.', async () => {
+    it('should dismiss confirmation dialog if the cancel button in the confirmation dialog is pressed.', async () => {
       // arrange
       await setup('/')
       await userEvent.click(screen.getByRole('button', { name: 'Edit' }))

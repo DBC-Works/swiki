@@ -1,17 +1,17 @@
 import { PathTypes } from '../../states/pages/types'
-import { useFrontPagePresentation } from '../hooks/hooks'
+import { useSandBoxPresentation } from '../hooks/hooks'
 import { PageContentViewer } from '../molecules/PageContentViewer'
 import { Page } from '../templates/Page'
 
 /**
- * FrontPage component
+ * SandBox component
  * @returns JSX Element
  */
-export const FrontPage: React.FC = (): JSX.Element => {
-  const { title, language, content } = useFrontPagePresentation()
+export const SandBox: React.FC = (): JSX.Element => {
+  const { title, language, content } = useSandBoxPresentation()
 
   return (
-    <Page pageTitle={title} returnPath={PathTypes.FrontPage}>
+    <Page pageTitle={title} returnPath={PathTypes.SandBox}>
       <PageContentViewer lang={language} pageTitle={title}>
         {content}
       </PageContentViewer>

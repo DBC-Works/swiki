@@ -1,14 +1,13 @@
-import { createFileRoute, useParams } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
+
+import { Page as PageViewer } from '../../../views/pages/Page'
 
 /**
  * Page component
  *
  * @returns JSX Element
  */
-const Page: React.FC = (): JSX.Element => {
-  const { pageTitle } = useParams({ from: '/pages/$pageTitle/' })
-  return <h2>{pageTitle}</h2>
-}
+const Page: React.FC = (): JSX.Element => <PageViewer />
 
 /**
  * Page route

@@ -15,20 +15,20 @@ export default defineConfig({
     alias: [
       {
         find: /.*\.svg/,
-        replacement: path.resolve(__dirname, './src/__mock__/svg.tsx'),
+        replacement: path.resolve(__dirname, './src/__mocks__/svg.tsx'),
       },
       {
         find: /@emotion\/react/,
-        replacement: path.resolve(__dirname, './src/__mock__/emotion.ts'),
+        replacement: path.resolve(__dirname, './src/__mocks__/emotion.ts'),
       },
       {
         find: /.*\/GlobalStyles/,
-        replacement: path.resolve(__dirname, './src/__mock__/GlobalStyles.tsx'),
+        replacement: path.resolve(__dirname, './src/__mocks__/GlobalStyles.tsx'),
       },
     ],
     coverage: {
       exclude: [
-        '__mock__',
+        '__mocks__',
         '**/types.ts',
         './vite-env.d.ts',
         './setupTest.d.ts',

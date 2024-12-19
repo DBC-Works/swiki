@@ -1,20 +1,16 @@
 import { screen } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { setupComponentUnderTest } from '../../testUtils'
-import { mockLinkAdapter } from '../testUtils'
+
+import userEvent from '@testing-library/user-event'
+import { describe, expect, it, vi } from 'vitest'
+import type { EditingInfo } from '../../states/edit/types'
+import { setupComponentWithStateProviderUnderTest } from '../../testUtils'
+vi.mock('../adapters/hooks.ts')
 
 import { TopAppBar } from './TopAppBar'
 
 describe('TopAppBar component', () => {
-  const setup = () => setupComponentUnderTest(<TopAppBar />)
-
-  beforeEach(() => {
-    mockLinkAdapter()
-  })
-  afterEach(() => {
-    vi.resetAllMocks()
-    vi.restoreAllMocks()
-  })
+  const setup = async (initialEditingInfo: EditingInfo | null = null) =>
+    setupComponentWithStateProviderUnderTest(<TopAppBar />, null, initialEditingInfo)
 
   it('should have the application title', () => {
     // arrange
@@ -27,19 +23,47 @@ describe('TopAppBar component', () => {
     expect(actual).toBeInTheDocument()
   })
 
-  it.each([
-    ['front', 'FrontPage', '/'],
-    ['pages', 'Pages', '/pages'],
-    ['history', 'History', '/history'],
-  ])('should have the link to the %s page', (_: string, pageTitle: string, href: string) => {
-    // arrange
-    setup()
+  it.each([['FrontPage'], ['Pages'], ['History']])(
+    'should have the link to the %s page',
+    (pageTitle: string) => {
+      // arrange
+      setup()
 
-    // act
-    const actual = screen.getByRole('link', { name: pageTitle })
+      // act
+      const actual = screen.getByRole('button', { name: pageTitle })
 
-    // assert
-    expect(actual).toBeInTheDocument()
-    expect(actual).toHaveAttribute('href', href)
-  })
+      // assert
+      expect(actual).toBeInTheDocument()
+    },
+  )
+
+  it.each([['FrontPage'], ['Pages'], ['History']])(
+    'should show discard confirmation dialog when %s button is pressed in editing',
+    async (pageTitle: string) => {
+      // arrange
+      setup({ editing: true })
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: pageTitle }))
+
+      // assert
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+    },
+  )
+
+  it.each([['FrontPage'], ['Pages'], ['History']])(
+    'should hide discard confirmation dialog when try to move %s page in editing but Cancel button is pressed',
+    async (pageTitle: string) => {
+      // arrange
+      setup({ editing: true })
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: pageTitle }))
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+      // assert
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    },
+  )
 })

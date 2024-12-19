@@ -1,34 +1,21 @@
-import { pageSetAtom } from '../../states/pages/atoms'
-import { pageSet } from '../../states/pages/states'
 import type { PageData, PageSet } from '../../states/pages/types'
 import type { NonEmptyArray } from '../../types'
-import { PageContentEditor } from './PageContentEditor'
 
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeAll, describe, expect, it, vi } from 'vitest'
-import { TestProvider, setupComponentUnderTest } from '../../testUtils'
+import { describe, expect, it, vi } from 'vitest'
+import { setupComponentWithStateProviderUnderTest } from '../../testUtils'
+vi.mock('../adapters/hooks.ts')
+
+import { PageContentEditor } from './PageContentEditor'
 
 describe('PageContentEditor component', () => {
   const setup = (pageTitle: string, initialPageSet: PageSet | null = null) =>
-    setupComponentUnderTest(
-      <TestProvider initialValues={[[pageSetAtom, initialPageSet ?? pageSet]]}>
-        <PageContentEditor pageTitle={pageTitle} />
-      </TestProvider>,
+    setupComponentWithStateProviderUnderTest(
+      <PageContentEditor pageTitle={pageTitle} />,
+      initialPageSet,
+      null,
     )
-
-  beforeAll(() => {
-    vi.mock('../adapters/hooks.ts', () => {
-      return {
-        useReturnPath: () => {
-          return () => '/'
-        },
-        useMoveTo: () => {
-          return () => {}
-        },
-      }
-    })
-  })
 
   it('should set default page presentation data to edit on first time to edit FrontPage', () => {
     // arrange && act
@@ -77,13 +64,13 @@ describe('PageContentEditor component', () => {
               language: 'en',
               title: 'Latest page',
               content: 'Latest page content',
-              dateAndTime: '21001231T000000Z',
+              dateAndTime: '2100-12-31T00:00:00Z',
             },
             {
               language: 'en',
               title: 'First page',
               content: 'First page content',
-              dateAndTime: '21000101T000000Z',
+              dateAndTime: '2100-01-01T00:00:00Z',
             },
           ] as NonEmptyArray<PageData>,
         },

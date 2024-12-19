@@ -11,9 +11,14 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Link } from '../adapters/Link'
+import { clearEditingInfoAtom, editingInfoAtom } from '../../states/edit/atoms'
+import { PathTypes } from '../../states/pages/types'
+import { useMoveTo } from '../adapters/hooks'
+import { DiscardConfirmationDialog } from './DiscardConfirmationDialog'
 
 const CSS_LINK_CONTAINER = css({
   color: 'var(--AppBar-color)',
@@ -31,19 +36,45 @@ const MenuItem: React.FC<{
 }> = ({ children, icon, to }): JSX.Element => {
   const theme = useTheme()
   const sm = useMediaQuery(theme.breakpoints.up('sm'))
+  const moveTo = useMoveTo()
+  const { editing } = useAtomValue(editingInfoAtom)
+  const clearEditingInfo = useSetAtom(clearEditingInfoAtom)
+  const [showConfirm, setShowConfirm] = useState(false)
+
+  const handleClick = useCallback(() => {
+    if (editing) {
+      setShowConfirm(true)
+    } else {
+      moveTo(to)
+    }
+  }, [editing, moveTo, to])
+  const handleClickConfirmOK = useCallback(() => {
+    setShowConfirm(false)
+    clearEditingInfo()
+    moveTo(to)
+  }, [clearEditingInfo, moveTo, to])
+  const handleClickConfirmCancel = useCallback(() => {
+    setShowConfirm(false)
+  }, [])
 
   return (
-    <Link to={to}>
+    <>
       {sm ? (
-        <Button variant="contained" disableElevation startIcon={icon}>
+        <Button variant="contained" disableElevation startIcon={icon} onClick={handleClick}>
           <span css={CSS_LINK_CONTAINER}>{children}</span>
         </Button>
       ) : (
-        <IconButton aria-label={children}>
+        <IconButton aria-label={children} onClick={handleClick}>
           <span css={[CSS_LINK_CONTAINER, CSS_MENU_ITEM_ICON_CONTAINER]}>{icon}</span>
         </IconButton>
       )}
-    </Link>
+      {showConfirm && (
+        <DiscardConfirmationDialog
+          onClickCancel={handleClickConfirmCancel}
+          onClickOK={handleClickConfirmOK}
+        />
+      )}
+    </>
   )
 }
 
@@ -61,13 +92,13 @@ export const TopAppBar: React.FC = (): JSX.Element => {
           swiki
         </Typography>
         <nav>
-          <MenuItem to="/" icon={<HomeIcon />}>
+          <MenuItem to={PathTypes.FrontPage} icon={<HomeIcon />}>
             FrontPage
           </MenuItem>
-          <MenuItem to="/pages" icon={<ListIcon />}>
+          <MenuItem to={PathTypes.Pages} icon={<ListIcon />}>
             {t('Pages')}
           </MenuItem>
-          <MenuItem to="/history" icon={<ListAltIcon />}>
+          <MenuItem to={PathTypes.History} icon={<ListAltIcon />}>
             History
           </MenuItem>
         </nav>
