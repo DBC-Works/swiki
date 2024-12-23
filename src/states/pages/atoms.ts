@@ -9,6 +9,7 @@ import {
   type Page,
   type PageData,
   type PageEditSource,
+  type PageInfoForList,
   type PageSet,
   type PageType,
   PageTypes,
@@ -80,7 +81,7 @@ export const sandBoxAtom = atom((get) => {
 /**
  * Page list read-only atom
  */
-export const pageListAtom = atom((get) =>
+export const pageListAtom = atom((get): PageInfoForList[] =>
   getFlattenPageList(get(pageSetAtom)).map(({ type, page }) => ({
     type,
     page: getLatestPageDataFrom(page) ?? null,
