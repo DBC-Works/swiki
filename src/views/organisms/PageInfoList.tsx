@@ -1,12 +1,11 @@
 import ArticleIcon from '@mui/icons-material/Article'
 import { Avatar, List, ListItemAvatar, ListItemButton, ListItemText, css } from '@mui/material'
-import dayjs from 'dayjs'
 import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
 
 import type { PageInfoForList } from '../../states/pages/types'
 import { useMoveTo } from '../adapters/hooks'
-import { formatPageUpdateInfo, getLanguage, getTitleToDisplay } from '../i18n'
+import { getLanguage, getTitleToDisplay } from '../i18n'
+import { PageUpdateInfo } from '../molecules/PageUpdateInfo'
 import { getSpecifiedPageBrowsePath } from '../utils'
 
 /**
@@ -42,16 +41,21 @@ const PageInfoListRow: React.FC<PageInfoListRowProps> = ({
   page,
   updateCount,
 }): JSX.Element => {
-  const { i18n } = useTranslation()
   const moveTo = useMoveTo()
 
   const title = getTitleToDisplay(type, page?.title ?? null)
   const language = getLanguage(page?.language ?? null)
   const path = getSpecifiedPageBrowsePath(type, page?.title ?? null)
   const updateInfo =
-    page !== null
-      ? formatPageUpdateInfo(i18n.language, dayjs(page?.dateAndTime), updateCount as number)
-      : '-'
+    page !== null ? (
+      <PageUpdateInfo
+        lang={language}
+        dateTime={page?.dateAndTime}
+        updateCount={updateCount as number}
+      />
+    ) : (
+      '-'
+    )
 
   const handleClick = useCallback(() => {
     moveTo(path)
