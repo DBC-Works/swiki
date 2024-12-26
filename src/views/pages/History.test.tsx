@@ -73,16 +73,16 @@ describe('History component', () => {
     expect(screen.getAllByRole('button')).toHaveLength(4)
     expect(
       screen.getByRole('button', {
-        name: /^FrontPage\(Updated\).+1st update on Jan 1, 2024 12:34 PM$/,
+        name: /^FrontPage\(Updated\).+1st update at Jan 1, 2024 12:34 PM$/,
       }),
     ).toBeInTheDocument()
     expect(
       screen.getByRole('button', {
-        name: /^SandBox\(Updated\).+1st update on Jan 2, 2024 12:34 PM$/,
+        name: /^SandBox\(Updated\).+1st update at Jan 2, 2024 12:34 PM$/,
       }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('button', { name: /^Updated page.+2nd update on Jan 1, 2025 12:34 PM$/ }),
+      screen.getByRole('button', { name: /^Updated page.+2nd update at Jan 1, 2025 12:34 PM$/ }),
     ).toBeInTheDocument()
   })
 

@@ -8,7 +8,7 @@ const FORMATTER_MAP: Record<
 > = {
   en: (updateCount: number, dateAndTime: string, lang: string) => (
     <>
-      {formatOrdinal(updateCount, lang)} update on <Time lang={lang} dateTime={dateAndTime} />
+      {formatOrdinal(updateCount, lang)} update at <Time lang={lang} dateTime={dateAndTime} />
     </>
   ),
 } as const
