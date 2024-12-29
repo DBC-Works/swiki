@@ -90,7 +90,12 @@ type PageInfoListProps = {
 export const PageInfoList: React.FC<PageInfoListProps> = ({ pages }) => (
   <List sx={{ width: '100%' }}>
     {pages.map(({ type, page, updateCount }) => (
-      <PageInfoListRow key={page?.title} type={type} page={page} updateCount={updateCount} />
+      <PageInfoListRow
+        key={page?.title ?? type}
+        type={type}
+        page={page}
+        updateCount={updateCount}
+      />
     ))}
   </List>
 )
