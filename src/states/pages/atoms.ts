@@ -97,6 +97,11 @@ export const latestPagesAtom = atom((get) =>
 )
 
 /**
+ * Flatten page list read-only atom
+ */
+export const flattenPageListAtom = atom((get) => getFlattenPageList(get(pageSetAtom)))
+
+/**
  * Page edit sources read-only atom
  */
 export const pageEditSourcesAtom = atom((get) => getPageEditSources(get(pageSetAtom)))

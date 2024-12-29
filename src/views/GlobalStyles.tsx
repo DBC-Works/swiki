@@ -32,6 +32,9 @@ div#root {
 a {
   text-decoration-line: none;
 }
+details > summary {
+  cursor: pointer;
+}
 `
 
 /**
