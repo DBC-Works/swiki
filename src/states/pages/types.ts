@@ -107,6 +107,26 @@ export type PageEditSource = {
 }
 
 /**
+ * Page info for list
+ */
+export type PageInfoForList = {
+  /**
+   * Page type
+   */
+  type: PageType
+
+  /**
+   * Page data
+   */
+  page: PageData | null
+
+  /**
+   * Update count
+   */
+  updateCount: number | null
+}
+
+/**
  * Path type
  */
 export const PathTypes = {

@@ -2,15 +2,16 @@ import type { PageSet } from '../../states/pages/types'
 
 import { screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+
 import { setupComponentWithStateProviderUnderTest } from '../../testUtils'
 vi.mock('../adapters/hooks.ts')
 vi.mock('../adapters/Link')
 
-import { Pages } from './Pages'
+import { History } from './History'
 
-describe('Pages component', () => {
+describe('History component', () => {
   const setup = (initialPageSet: PageSet | null = null) =>
-    setupComponentWithStateProviderUnderTest(<Pages />, initialPageSet, null)
+    setupComponentWithStateProviderUnderTest(<History />, initialPageSet, null)
 
   it('should list up "FrontPage" and "SandBox" as items without update information if no page data', () => {
     // arrange & act
@@ -83,5 +84,54 @@ describe('Pages component', () => {
     expect(
       screen.getByRole('button', { name: /^Updated page.+2nd update at Jan 1, 2025 12:34 PM$/ }),
     ).toBeInTheDocument()
+  })
+
+  it('should list pages in descending order of update time', () => {
+    // arrange & act
+    setup({
+      frontPage: null,
+      sandBox: null,
+      pages: [
+        {
+          id: crypto.randomUUID(),
+          pageDataHistory: [
+            {
+              title: 'Older page',
+              language: 'en',
+              content: 'Older page content',
+              dateAndTime: '2024-11-30T12:34:56',
+            },
+          ],
+        },
+        {
+          id: crypto.randomUUID(),
+          pageDataHistory: [
+            {
+              title: 'Elder page(updated)',
+              language: 'en',
+              content: 'Elder page content',
+              dateAndTime: '2025-01-01T12:34:56',
+            },
+            {
+              title: 'Elder page',
+              language: 'en',
+              content: 'Elder page content',
+              dateAndTime: '2024-01-01T12:34:56',
+            },
+          ],
+        },
+      ],
+    })
+
+    // assert
+    const actual = screen
+      .getAllByRole('button')
+      .map((button) => button.textContent)
+      .filter((text) => text !== '')
+    const expected = ['Elder page(updated)', 'Older page', 'FrontPage', 'SandBox']
+    expect(actual).toHaveLength(expected.length)
+    for (let index = 0; index < actual.length; ++index) {
+      expect(actual[index]?.startsWith(expected[index])).toBeTruthy()
+    }
   })
 })
