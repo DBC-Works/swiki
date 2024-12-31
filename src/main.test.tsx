@@ -368,5 +368,26 @@ describe('route', () => {
       // assert
       expect(await screen.findByText(/Updated FrontPage content\./)).toBeInTheDocument()
     })
+
+    it('should not show discard confirm dialog when FrontPage button in app bar pressed after update content title', async () => {
+      // arrange
+      await setup('/pages/Content%20page', initialPageSet)
+      await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
+      await userEvent.type(screen.getByRole('textbox', { name: 'Title' }), '(updated)')
+      await userEvent.click(screen.getByRole('button', { name: 'OK' }))
+      expect(
+        await screen.findByRole('heading', { name: 'Content page(updated)', level: 2 }),
+      ).toBeInTheDocument()
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'FrontPage' }))
+
+      // assert
+      await waitFor(() => {
+        expect(
+          screen.queryByText('Are you sure you want to discard your edits?'),
+        ).not.toBeInTheDocument()
+      })
+    })
   })
 })

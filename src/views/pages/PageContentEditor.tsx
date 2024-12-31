@@ -302,7 +302,7 @@ export const PageContentEditor: React.FC<Props> = ({ pageTitle }): JSX.Element =
     setShowConfirm(false)
   }, [])
 
-  const pagePath: ToPath = decidePath(getPageBrowsePath(editingTitle))
+  const pagePath: ToPath = returnPath ?? getPageBrowsePath(editingTitle)
   const handleClickOK = useCallback(() => {
     if (editing) {
       addPageData(
@@ -312,9 +312,10 @@ export const PageContentEditor: React.FC<Props> = ({ pageTitle }): JSX.Element =
         editingTitle,
         editingContent.current.content,
       )
+      clearEditingInfo()
     }
     moveTo(pagePath)
-  }, [addPageData, editing, editingTitle, id, language, moveTo, pagePath, type])
+  }, [addPageData, clearEditingInfo, editing, editingTitle, id, language, moveTo, pagePath, type])
 
   return (
     <Section css={CSS_SECTION} fitToContentArea={true}>
