@@ -1,3 +1,4 @@
+import DifferenceIcon from '@mui/icons-material/Difference'
 import {
   FormControl,
   InputLabel,
@@ -17,6 +18,7 @@ import { type PageData, PathTypes } from '../../states/pages/types'
 import type { NonEmptyArray } from '../../types'
 import { useMoveTo, useRouterParams } from '../adapters/hooks'
 import { Time } from '../atoms/Time'
+import { useExtraSmallWidth } from '../hooks/hooks'
 import { PageContentViewer } from '../molecules/PageContentViewer'
 import { PageUpdateInfo } from '../molecules/PageUpdateInfo'
 import { Page as PageTemplate } from '../templates/Page'
@@ -24,20 +26,25 @@ import { Page as PageTemplate } from '../templates/Page'
 type ComparisonPageSelectProps = {
   index: number
   updateCount: number
+  label: string
+  selectWidth: number
 }
 
 const ComparisonPageSelect: React.FC<ComparisonPageSelectProps> = ({
   index,
   updateCount,
+  label,
+  selectWidth,
 }): JSX.Element => {
+  const xs = useExtraSmallWidth()
   const { t } = useTranslation()
   const labelId = `history-select-${index}`
-  const label = t('Compare with...')
+  const labelLiteral = xs ? <DifferenceIcon /> : label
 
   return (
     <FormControl size="small">
-      <InputLabel id={labelId}>{label}</InputLabel>
-      <Select labelId={labelId} label={label} sx={{ width: `${label.length}em` }}>
+      <InputLabel id={labelId}>{labelLiteral}</InputLabel>
+      <Select labelId={labelId} label={label} sx={{ width: `${selectWidth}em` }}>
         {Array.from({ length: updateCount }, (_, i) => i)
           .filter((i) => i !== index)
           .map((i) => (
@@ -55,12 +62,16 @@ type PageHistoryProps = {
 }
 
 const PageHistory: React.FC<PageHistoryProps> = ({ pageDataHistory }): JSX.Element => {
+  const xs = useExtraSmallWidth()
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const handleToggle = useCallback(() => {
     setOpen((open) => !open)
   }, [])
   const updateCount = pageDataHistory.length
+  const label = t('Compare with...')
+  const selectWidth = xs ? 4.5 : label.length
+  const listItemTextStyle = { marginRight: `${selectWidth - 1.5}em` }
 
   return (
     <details open={open} onToggle={handleToggle}>
@@ -76,11 +87,16 @@ const PageHistory: React.FC<PageHistoryProps> = ({ pageDataHistory }): JSX.Eleme
               key={dateAndTime}
               secondaryAction={
                 1 < pageDataHistory.length && (
-                  <ComparisonPageSelect index={index} updateCount={pageDataHistory.length} />
+                  <ComparisonPageSelect
+                    index={index}
+                    updateCount={pageDataHistory.length}
+                    label={label}
+                    selectWidth={selectWidth}
+                  />
                 )
               }
             >
-              <ListItemText secondary={title} lang={language}>
+              <ListItemText secondary={title} lang={language} sx={listItemTextStyle}>
                 <Typography component="span" color="textSecondary">
                   {`${t('Rev.')}${updateCount - index}:`} <Time dateTime={dateAndTime} />
                 </Typography>
