@@ -1,3 +1,4 @@
+import { useMediaQuery, useTheme } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { useTranslation } from 'react-i18next'
 
@@ -11,7 +12,14 @@ import { type PageEditSource, type PagePresentation, PageTypes } from '../../sta
 import { getTitleToDisplay } from '../i18n'
 
 /**
- * Get latest page titles hook
+ * Gets whether the width is extra small
+ * @returns true if the width is extra small
+ */
+export const useExtraSmallWidth = (): boolean =>
+  useMediaQuery(useTheme().breakpoints.up('sm')) === false
+
+/**
+ * Get latest page titles
  * @returns Latest page title set
  */
 export const usePageTitles = (): Set<string> => {

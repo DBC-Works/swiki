@@ -2,15 +2,7 @@ import { css } from '@emotion/react'
 import HomeIcon from '@mui/icons-material/Home'
 import ListIcon from '@mui/icons-material/List'
 import ListAltIcon from '@mui/icons-material/ListAlt'
-import {
-  AppBar,
-  Button,
-  IconButton,
-  Toolbar,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import { AppBar, Button, IconButton, Toolbar, Typography } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -18,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { clearEditingInfoAtom, editingInfoAtom } from '../../states/edit/atoms'
 import { PathTypes } from '../../states/pages/types'
 import { useMoveTo } from '../adapters/hooks'
+import { useExtraSmallWidth } from '../hooks/hooks'
 import { DiscardConfirmationDialog } from './DiscardConfirmationDialog'
 
 const CSS_LINK_CONTAINER = css({
@@ -34,8 +27,7 @@ const MenuItem: React.FC<{
   children: string
   icon: JSX.Element
 }> = ({ children, icon, to }): JSX.Element => {
-  const theme = useTheme()
-  const sm = useMediaQuery(theme.breakpoints.up('sm'))
+  const xs = useExtraSmallWidth()
   const moveTo = useMoveTo()
   const { editing } = useAtomValue(editingInfoAtom)
   const clearEditingInfo = useSetAtom(clearEditingInfoAtom)
@@ -59,14 +51,14 @@ const MenuItem: React.FC<{
 
   return (
     <>
-      {sm ? (
-        <Button variant="contained" disableElevation startIcon={icon} onClick={handleClick}>
-          <span css={CSS_LINK_CONTAINER}>{children}</span>
-        </Button>
-      ) : (
+      {xs ? (
         <IconButton aria-label={children} onClick={handleClick}>
           <span css={[CSS_LINK_CONTAINER, CSS_MENU_ITEM_ICON_CONTAINER]}>{icon}</span>
         </IconButton>
+      ) : (
+        <Button variant="contained" disableElevation startIcon={icon} onClick={handleClick}>
+          <span css={CSS_LINK_CONTAINER}>{children}</span>
+        </Button>
       )}
       {showConfirm && (
         <DiscardConfirmationDialog
