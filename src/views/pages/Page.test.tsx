@@ -1,9 +1,9 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { PageData, PageSet } from '../../states/pages/types'
-import { setupComponentWithStateProviderUnderTest } from '../../testUtils'
+import { fireToggleEvent, setupComponentWithStateProviderUnderTest } from '../../testUtils'
 import type { NonEmptyArray } from '../../types'
 vi.mock('../adapters/hooks.ts')
 vi.mock('../adapters/Link')
@@ -35,16 +35,6 @@ describe('Page component', () => {
     ],
   }
 
-  const fireToggleEvent = (detailsElement: Element): void => {
-    fireEvent(
-      detailsElement,
-      new Event('toggle', {
-        bubbles: true,
-        cancelable: true,
-      }),
-    )
-  }
-
   const setup = (initialPageSet: PageSet | null = null) =>
     setupComponentWithStateProviderUnderTest(<Page />, initialPageSet, null)
 
@@ -71,7 +61,7 @@ describe('Page component', () => {
       setup(initialPageSet)
 
       // act
-      fireToggleEvent(screen.getByText(/update at/).closest('details') as Element)
+      fireToggleEvent(screen.getByText(/update at/).closest('details') as HTMLDetailsElement)
 
       // assert
       expect(screen.getAllByText('Content page')).toHaveLength(2)
@@ -82,7 +72,7 @@ describe('Page component', () => {
     it('should close page opened history list if summary is pressed', () => {
       // arrange
       setup(initialPageSet)
-      const detailsElement = screen.getByText(/update at/).closest('details') as Element
+      const detailsElement = screen.getByText(/update at/).closest('details') as HTMLDetailsElement
       fireToggleEvent(detailsElement)
       expect(screen.getAllByText('Content page')).toHaveLength(2)
 
@@ -116,7 +106,7 @@ describe('Page component', () => {
       })
 
       // act
-      fireToggleEvent(screen.getByText(/update at/).closest('details') as Element)
+      fireToggleEvent(screen.getByText(/update at/).closest('details') as HTMLDetailsElement)
 
       // assert
       expect(screen.queryByRole('listbox', { name: 'Compare with...' })).not.toBeInTheDocument()
@@ -155,7 +145,7 @@ describe('Page component', () => {
       })
 
       // act
-      fireToggleEvent(screen.getByText(/update at/).closest('details') as Element)
+      fireToggleEvent(screen.getByText(/update at/).closest('details') as HTMLDetailsElement)
 
       // assert
       const actual = screen.getAllByRole('combobox', { name: 'Compare with...' })
