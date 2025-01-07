@@ -7,7 +7,11 @@ import { describe, expect, it } from 'vitest'
 import './i18n'
 import { routeTree } from './routeTree.gen'
 import type { PageData, PageSet } from './states/pages/types'
-import { type SetUpResult, setupComponentWithStateProviderUnderTest } from './testUtils'
+import {
+  type SetUpResult,
+  fireToggleEvent,
+  setupComponentWithStateProviderUnderTest,
+} from './testUtils'
 import type { NonEmptyArray } from './types'
 
 describe('route', () => {
@@ -23,6 +27,12 @@ describe('route', () => {
             title: 'Content page',
             content: 'Content page content',
             dateAndTime: '2025-01-01T00:00:00Z',
+          },
+          {
+            language: 'en',
+            title: 'Content page(1st)',
+            content: 'Content page content',
+            dateAndTime: '2024-12-31T00:00:00Z',
           },
         ] as NonEmptyArray<PageData>,
       },
@@ -189,6 +199,33 @@ describe('route', () => {
       // assert
       expect(await screen.findByRole('heading', { name: 'Pages', level: 2 })).toBeInTheDocument()
     })
+
+    it.for([
+      { targetRevision: 2, selectRevision: 1 },
+      { targetRevision: 1, selectRevision: 2 },
+    ])(
+      'should move to diff page when revision selector in page history item is selected',
+      async ({ targetRevision, selectRevision }) => {
+        // arrange
+        await setup('/pages/Content%20page', initialPageSet)
+        fireToggleEvent(screen.getByText(/update at/).closest('details') as HTMLDetailsElement)
+        const re = new RegExp(`Rev.${targetRevision}:`)
+        const listItem = screen.getByText(re).closest('li') as HTMLLIElement
+        const select = getByRole(listItem, 'combobox', { name: 'Compare with...' })
+        await userEvent.click(select)
+
+        // act
+        await userEvent.click(screen.getByText(`Rev.${selectRevision}`))
+
+        // assert
+        expect(
+          screen.getByRole('heading', {
+            name: 'Diff between Rev.1 and Rev.2 of “Content page”',
+            level: 2,
+          }),
+        ).toBeInTheDocument()
+      },
+    )
   })
 
   describe('Add new page', () => {

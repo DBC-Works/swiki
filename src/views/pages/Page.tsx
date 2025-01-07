@@ -23,7 +23,38 @@ import { PageContentViewer } from '../molecules/PageContentViewer'
 import { PageUpdateInfo } from '../molecules/PageUpdateInfo'
 import { Page as PageTemplate } from '../templates/Page'
 
+const Revision: React.FC<React.ComponentProps<'span'>> = ({ children }): JSX.Element => {
+  const { t } = useTranslation()
+  return <>{t('Rev.{{revision}}', { revision: children })}</>
+}
+
+type ComparisonPageSelectMenuItemProps = {
+  escapedPageTitle: string
+  targetRevision: number
+  selectRevision: number
+}
+
+const ComparisonPageSelectMenuItem: React.FC<ComparisonPageSelectMenuItemProps> = ({
+  escapedPageTitle,
+  targetRevision,
+  selectRevision,
+}): JSX.Element => {
+  const moveTo = useMoveTo()
+  const handleClick = useCallback(() => {
+    const to = selectRevision < targetRevision ? targetRevision : selectRevision
+    const from = selectRevision < targetRevision ? selectRevision : targetRevision
+    moveTo(`/pages/${escapedPageTitle}/diff/${to}/${from}`)
+  }, [moveTo, escapedPageTitle, selectRevision, targetRevision])
+
+  return (
+    <MenuItem onClick={handleClick}>
+      <Revision>{`${selectRevision}`}</Revision>
+    </MenuItem>
+  )
+}
+
 type ComparisonPageSelectProps = {
+  escapedPageTitle: string
   index: number
   updateCount: number
   label: string
@@ -31,13 +62,13 @@ type ComparisonPageSelectProps = {
 }
 
 const ComparisonPageSelect: React.FC<ComparisonPageSelectProps> = ({
-  index,
-  updateCount,
+  escapedPageTitle,
   label,
   selectWidth,
+  index,
+  updateCount,
 }): JSX.Element => {
   const xs = useExtraSmallWidth()
-  const { t } = useTranslation()
   const labelId = `history-select-${index}`
   const labelLiteral = xs ? <DifferenceIcon /> : label
 
@@ -48,9 +79,12 @@ const ComparisonPageSelect: React.FC<ComparisonPageSelectProps> = ({
         {Array.from({ length: updateCount }, (_, i) => i)
           .filter((i) => i !== index)
           .map((i) => (
-            <MenuItem
+            <ComparisonPageSelectMenuItem
               key={`${labelId}-menu-item-${i}`}
-            >{`${t('Rev.')}${updateCount - i}`}</MenuItem>
+              escapedPageTitle={escapedPageTitle}
+              targetRevision={updateCount - index}
+              selectRevision={updateCount - i}
+            />
           ))}
       </Select>
     </FormControl>
@@ -58,10 +92,14 @@ const ComparisonPageSelect: React.FC<ComparisonPageSelectProps> = ({
 }
 
 type PageHistoryProps = {
+  escapedPageTitle: string
   pageDataHistory: NonEmptyArray<PageData>
 }
 
-const PageHistory: React.FC<PageHistoryProps> = ({ pageDataHistory }): JSX.Element => {
+const PageHistory: React.FC<PageHistoryProps> = ({
+  escapedPageTitle,
+  pageDataHistory,
+}): JSX.Element => {
   const xs = useExtraSmallWidth()
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
@@ -88,17 +126,19 @@ const PageHistory: React.FC<PageHistoryProps> = ({ pageDataHistory }): JSX.Eleme
               secondaryAction={
                 1 < pageDataHistory.length && (
                   <ComparisonPageSelect
-                    index={index}
-                    updateCount={pageDataHistory.length}
+                    escapedPageTitle={escapedPageTitle}
                     label={label}
                     selectWidth={selectWidth}
+                    index={index}
+                    updateCount={pageDataHistory.length}
                   />
                 )
               }
             >
               <ListItemText secondary={title} lang={language} sx={listItemTextStyle}>
                 <Typography component="span" color="textSecondary">
-                  {`${t('Rev.')}${updateCount - index}:`} <Time dateTime={dateAndTime} />
+                  <Revision>{`${updateCount - index}`}</Revision>:
+                  <Time dateTime={dateAndTime} />
                 </Typography>
               </ListItemText>
             </ListItem>
@@ -139,7 +179,10 @@ export const Page: React.FC = (): JSX.Element | null => {
       <PageContentViewer lang={language} pageTitle={title}>
         {content}
       </PageContentViewer>
-      <PageHistory pageDataHistory={page?.page?.pageDataHistory as NonEmptyArray<PageData>} />
+      <PageHistory
+        escapedPageTitle={pageTitle}
+        pageDataHistory={page?.page?.pageDataHistory as NonEmptyArray<PageData>}
+      />
     </PageTemplate>
   )
 }

@@ -155,14 +155,14 @@ describe('Page component', () => {
       for (const combobox of actual) {
         await userEvent.click(combobox)
 
-        const options = screen.getAllByRole('option')
-        expect(options).toHaveLength(2)
+        const menuItems = screen.getAllByRole('menuitem')
+        expect(menuItems).toHaveLength(2)
 
         const expected = Array.from({ length: actual.length }, (_, i) => i)
           .reverse()
           .filter((i) => i !== cbIndex)
           .map((i) => `Rev.${i + 1}`)
-        expect(options.map((option) => option.textContent)).toEqual(expected)
+        expect(menuItems.map((menuItems) => menuItems.textContent)).toEqual(expected)
 
         --cbIndex
       }
