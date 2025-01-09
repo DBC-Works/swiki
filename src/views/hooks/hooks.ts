@@ -3,12 +3,18 @@ import { useAtomValue } from 'jotai'
 import { useTranslation } from 'react-i18next'
 
 import {
+  flattenPageListAtom,
   frontPageAtom,
   latestPageTitlesAtom,
   pageEditSourcesAtom,
   sandBoxAtom,
 } from '../../states/pages/atoms'
-import { type PageEditSource, type PagePresentation, PageTypes } from '../../states/pages/types'
+import {
+  type Page,
+  type PageEditSource,
+  type PagePresentation,
+  PageTypes,
+} from '../../states/pages/types'
 import { getTitleToDisplay } from '../i18n'
 
 /**
@@ -80,6 +86,15 @@ export const useSandBoxPresentation = (): PagePresentation => {
     }
   )
 }
+
+/**
+ * Get page of specified title
+ * @param title Page title to get
+ * @returns Page date(null if does not exists)
+ */
+export const usePageWithSpecifiedTitle = (title: string): Page | null =>
+  useAtomValue(flattenPageListAtom).find(({ page }) => page?.pageDataHistory[0].title === title)
+    ?.page ?? null
 
 /**
  * Get page edit source

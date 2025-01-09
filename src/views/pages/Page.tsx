@@ -9,16 +9,14 @@ import {
   Select,
   Typography,
 } from '@mui/material'
-import { useAtomValue } from 'jotai'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { flattenPageListAtom } from '../../states/pages/atoms'
 import { type PageData, PathTypes } from '../../states/pages/types'
 import type { NonEmptyArray } from '../../types'
 import { useMoveTo, useRouterParams } from '../adapters/hooks'
 import { Time } from '../atoms/Time'
-import { useExtraSmallWidth } from '../hooks/hooks'
+import { useExtraSmallWidth, usePageWithSpecifiedTitle } from '../hooks/hooks'
 import { PageContentViewer } from '../molecules/PageContentViewer'
 import { PageUpdateInfo } from '../molecules/PageUpdateInfo'
 import { Page as PageTemplate } from '../templates/Page'
@@ -157,10 +155,8 @@ export const Page: React.FC = (): JSX.Element | null => {
   const { pageTitle } = useRouterParams({ from: '/pages/$pageTitle/' })
   const moveTo = useMoveTo()
   const title = decodeURIComponent(pageTitle)
-  const page = useAtomValue(flattenPageListAtom).find(
-    ({ page }) => page?.pageDataHistory[0].title === title,
-  )
-  const latestPageData = page?.page?.pageDataHistory[0] ?? null
+  const page = usePageWithSpecifiedTitle(title)
+  const latestPageData = page?.pageDataHistory[0] ?? null
 
   useEffect(() => {
     if (!latestPageData) {
@@ -181,7 +177,7 @@ export const Page: React.FC = (): JSX.Element | null => {
       </PageContentViewer>
       <PageHistory
         escapedPageTitle={pageTitle}
-        pageDataHistory={page?.page?.pageDataHistory as NonEmptyArray<PageData>}
+        pageDataHistory={page?.pageDataHistory as NonEmptyArray<PageData>}
       />
     </PageTemplate>
   )
