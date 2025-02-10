@@ -18,11 +18,18 @@ import {
 import { getTitleToDisplay } from '../i18n'
 
 /**
- * Gets whether the width is extra small
+ * Get whether the width is extra small
  * @returns true if the width is extra small
  */
 export const useExtraSmallWidth = (): boolean =>
   useMediaQuery(useTheme().breakpoints.up('sm')) === false
+
+/**
+ * Gets border color
+ * @returns Border color
+ */
+export const useMaterialUiBorderColor = () =>
+  useTheme().palette.mode === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)'
 
 /**
  * Get latest page titles
