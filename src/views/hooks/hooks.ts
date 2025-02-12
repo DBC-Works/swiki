@@ -1,17 +1,38 @@
+import { useMediaQuery, useTheme } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { useTranslation } from 'react-i18next'
 
 import {
+  flattenPageListAtom,
   frontPageAtom,
   latestPageTitlesAtom,
   pageEditSourcesAtom,
   sandBoxAtom,
 } from '../../states/pages/atoms'
-import { type PageEditSource, type PagePresentation, PageTypes } from '../../states/pages/types'
+import {
+  type Page,
+  type PageEditSource,
+  type PagePresentation,
+  PageTypes,
+} from '../../states/pages/types'
 import { getTitleToDisplay } from '../i18n'
 
 /**
- * Get latest page titles hook
+ * Get whether the width is extra small
+ * @returns true if the width is extra small
+ */
+export const useExtraSmallWidth = (): boolean =>
+  useMediaQuery(useTheme().breakpoints.up('sm')) === false
+
+/**
+ * Get border color
+ * @returns Border color
+ */
+export const useMaterialUiBorderColor = () =>
+  useTheme().palette.mode === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)'
+
+/**
+ * Get latest page titles
  * @returns Latest page title set
  */
 export const usePageTitles = (): Set<string> => {
@@ -72,6 +93,15 @@ export const useSandBoxPresentation = (): PagePresentation => {
     }
   )
 }
+
+/**
+ * Get page of specified title
+ * @param title Page title to get
+ * @returns Page date(null if does not exists)
+ */
+export const usePageWithSpecifiedTitle = (title: string): Page | null =>
+  useAtomValue(flattenPageListAtom).find(({ page }) => page?.pageDataHistory[0].title === title)
+    ?.page ?? null
 
 /**
  * Get page edit source

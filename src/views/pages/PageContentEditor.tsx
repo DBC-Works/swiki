@@ -17,7 +17,7 @@ import { addPageDataAtom } from '../../states/pages/atoms'
 import { type PageEditSource, PageTypes, PathTypes } from '../../states/pages/types'
 import type { ToPath } from '../adapters/Link'
 import { useMoveTo, useReturnPath } from '../adapters/hooks'
-import { usePageEditSource, useUsableTitle } from '../hooks/hooks'
+import { useMaterialUiBorderColor, usePageEditSource, useUsableTitle } from '../hooks/hooks'
 import { ModalOperationButtonsBar } from '../molecules/ModalOperationButtonsBar'
 import { PageContentViewer } from '../molecules/PageContentViewer'
 import { DiscardConfirmationDialog } from '../organisms/DiscardConfirmationDialog'
@@ -82,6 +82,7 @@ const ContentEditorTabPanel: React.FC<React.ComponentProps<'div'> & { visible: b
   children,
 }) => {
   const theme = useTheme()
+  const borderColor = useMaterialUiBorderColor()
 
   const CSS_TABPANEL = css({
     display: visible ? 'flex' : 'none',
@@ -95,7 +96,7 @@ const ContentEditorTabPanel: React.FC<React.ComponentProps<'div'> & { visible: b
       display: 'flex',
       height: '1rem',
       flexGrow: 1,
-      border: `1px solid ${theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)'}`,
+      border: `1px solid ${borderColor}`,
       borderRadius: '4px',
     },
     '> *:first-of-type': {
@@ -302,7 +303,7 @@ export const PageContentEditor: React.FC<Props> = ({ pageTitle }): JSX.Element =
     setShowConfirm(false)
   }, [])
 
-  const pagePath: ToPath = decidePath(getPageBrowsePath(editingTitle))
+  const pagePath: ToPath = returnPath ?? getPageBrowsePath(editingTitle)
   const handleClickOK = useCallback(() => {
     if (editing) {
       addPageData(
@@ -312,9 +313,10 @@ export const PageContentEditor: React.FC<Props> = ({ pageTitle }): JSX.Element =
         editingTitle,
         editingContent.current.content,
       )
+      clearEditingInfo()
     }
     moveTo(pagePath)
-  }, [addPageData, editing, editingTitle, id, language, moveTo, pagePath, type])
+  }, [addPageData, clearEditingInfo, editing, editingTitle, id, language, moveTo, pagePath, type])
 
   return (
     <Section css={CSS_SECTION} fitToContentArea={true}>

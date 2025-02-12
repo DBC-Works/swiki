@@ -18,8 +18,7 @@ import { Route as PagesIndexImport } from './routes/pages/index'
 import { Route as HistoryIndexImport } from './routes/history/index'
 import { Route as PagesPageTitleIndexImport } from './routes/pages/$pageTitle/index'
 import { Route as PagesPageTitleEditImport } from './routes/pages/$pageTitle/edit'
-import { Route as PagesPageTitleDiffIndexImport } from './routes/pages/$pageTitle/diff/index'
-import { Route as PagesPageTitleDiffNumberImport } from './routes/pages/$pageTitle/diff/$number'
+import { Route as PagesPageTitleDiffToFromImport } from './routes/pages/$pageTitle/diff/$to/$from'
 
 // Create/Update Routes
 
@@ -65,15 +64,9 @@ const PagesPageTitleEditRoute = PagesPageTitleEditImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const PagesPageTitleDiffIndexRoute = PagesPageTitleDiffIndexImport.update({
-  id: '/pages/$pageTitle/diff/',
-  path: '/pages/$pageTitle/diff/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const PagesPageTitleDiffNumberRoute = PagesPageTitleDiffNumberImport.update({
-  id: '/pages/$pageTitle/diff/$number',
-  path: '/pages/$pageTitle/diff/$number',
+const PagesPageTitleDiffToFromRoute = PagesPageTitleDiffToFromImport.update({
+  id: '/pages/$pageTitle/diff/$to/$from',
+  path: '/pages/$pageTitle/diff/$to/$from',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -130,18 +123,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PagesPageTitleIndexImport
       parentRoute: typeof rootRoute
     }
-    '/pages/$pageTitle/diff/$number': {
-      id: '/pages/$pageTitle/diff/$number'
-      path: '/pages/$pageTitle/diff/$number'
-      fullPath: '/pages/$pageTitle/diff/$number'
-      preLoaderRoute: typeof PagesPageTitleDiffNumberImport
-      parentRoute: typeof rootRoute
-    }
-    '/pages/$pageTitle/diff/': {
-      id: '/pages/$pageTitle/diff/'
-      path: '/pages/$pageTitle/diff'
-      fullPath: '/pages/$pageTitle/diff'
-      preLoaderRoute: typeof PagesPageTitleDiffIndexImport
+    '/pages/$pageTitle/diff/$to/$from': {
+      id: '/pages/$pageTitle/diff/$to/$from'
+      path: '/pages/$pageTitle/diff/$to/$from'
+      fullPath: '/pages/$pageTitle/diff/$to/$from'
+      preLoaderRoute: typeof PagesPageTitleDiffToFromImport
       parentRoute: typeof rootRoute
     }
   }
@@ -157,8 +143,7 @@ export interface FileRoutesByFullPath {
   '/pages': typeof PagesIndexRoute
   '/pages/$pageTitle/edit': typeof PagesPageTitleEditRoute
   '/pages/$pageTitle': typeof PagesPageTitleIndexRoute
-  '/pages/$pageTitle/diff/$number': typeof PagesPageTitleDiffNumberRoute
-  '/pages/$pageTitle/diff': typeof PagesPageTitleDiffIndexRoute
+  '/pages/$pageTitle/diff/$to/$from': typeof PagesPageTitleDiffToFromRoute
 }
 
 export interface FileRoutesByTo {
@@ -169,8 +154,7 @@ export interface FileRoutesByTo {
   '/pages': typeof PagesIndexRoute
   '/pages/$pageTitle/edit': typeof PagesPageTitleEditRoute
   '/pages/$pageTitle': typeof PagesPageTitleIndexRoute
-  '/pages/$pageTitle/diff/$number': typeof PagesPageTitleDiffNumberRoute
-  '/pages/$pageTitle/diff': typeof PagesPageTitleDiffIndexRoute
+  '/pages/$pageTitle/diff/$to/$from': typeof PagesPageTitleDiffToFromRoute
 }
 
 export interface FileRoutesById {
@@ -182,8 +166,7 @@ export interface FileRoutesById {
   '/pages/': typeof PagesIndexRoute
   '/pages/$pageTitle/edit': typeof PagesPageTitleEditRoute
   '/pages/$pageTitle/': typeof PagesPageTitleIndexRoute
-  '/pages/$pageTitle/diff/$number': typeof PagesPageTitleDiffNumberRoute
-  '/pages/$pageTitle/diff/': typeof PagesPageTitleDiffIndexRoute
+  '/pages/$pageTitle/diff/$to/$from': typeof PagesPageTitleDiffToFromRoute
 }
 
 export interface FileRouteTypes {
@@ -196,8 +179,7 @@ export interface FileRouteTypes {
     | '/pages'
     | '/pages/$pageTitle/edit'
     | '/pages/$pageTitle'
-    | '/pages/$pageTitle/diff/$number'
-    | '/pages/$pageTitle/diff'
+    | '/pages/$pageTitle/diff/$to/$from'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -207,8 +189,7 @@ export interface FileRouteTypes {
     | '/pages'
     | '/pages/$pageTitle/edit'
     | '/pages/$pageTitle'
-    | '/pages/$pageTitle/diff/$number'
-    | '/pages/$pageTitle/diff'
+    | '/pages/$pageTitle/diff/$to/$from'
   id:
     | '__root__'
     | '/'
@@ -218,8 +199,7 @@ export interface FileRouteTypes {
     | '/pages/'
     | '/pages/$pageTitle/edit'
     | '/pages/$pageTitle/'
-    | '/pages/$pageTitle/diff/$number'
-    | '/pages/$pageTitle/diff/'
+    | '/pages/$pageTitle/diff/$to/$from'
   fileRoutesById: FileRoutesById
 }
 
@@ -231,8 +211,7 @@ export interface RootRouteChildren {
   PagesIndexRoute: typeof PagesIndexRoute
   PagesPageTitleEditRoute: typeof PagesPageTitleEditRoute
   PagesPageTitleIndexRoute: typeof PagesPageTitleIndexRoute
-  PagesPageTitleDiffNumberRoute: typeof PagesPageTitleDiffNumberRoute
-  PagesPageTitleDiffIndexRoute: typeof PagesPageTitleDiffIndexRoute
+  PagesPageTitleDiffToFromRoute: typeof PagesPageTitleDiffToFromRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -243,8 +222,7 @@ const rootRouteChildren: RootRouteChildren = {
   PagesIndexRoute: PagesIndexRoute,
   PagesPageTitleEditRoute: PagesPageTitleEditRoute,
   PagesPageTitleIndexRoute: PagesPageTitleIndexRoute,
-  PagesPageTitleDiffNumberRoute: PagesPageTitleDiffNumberRoute,
-  PagesPageTitleDiffIndexRoute: PagesPageTitleDiffIndexRoute,
+  PagesPageTitleDiffToFromRoute: PagesPageTitleDiffToFromRoute,
 }
 
 export const routeTree = rootRoute
@@ -266,8 +244,7 @@ export const routeTree = rootRoute
         "/pages/",
         "/pages/$pageTitle/edit",
         "/pages/$pageTitle/",
-        "/pages/$pageTitle/diff/$number",
-        "/pages/$pageTitle/diff/"
+        "/pages/$pageTitle/diff/$to/$from"
       ]
     },
     "/": {
@@ -291,11 +268,8 @@ export const routeTree = rootRoute
     "/pages/$pageTitle/": {
       "filePath": "pages/$pageTitle/index.tsx"
     },
-    "/pages/$pageTitle/diff/$number": {
-      "filePath": "pages/$pageTitle/diff/$number.tsx"
-    },
-    "/pages/$pageTitle/diff/": {
-      "filePath": "pages/$pageTitle/diff/index.tsx"
+    "/pages/$pageTitle/diff/$to/$from": {
+      "filePath": "pages/$pageTitle/diff/$to/$from.tsx"
     }
   }
 }

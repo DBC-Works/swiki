@@ -1,4 +1,4 @@
-import { type RenderResult, render } from '@testing-library/react'
+import { type RenderResult, fireEvent, render } from '@testing-library/react'
 import { type UserEvent, userEvent } from '@testing-library/user-event'
 import { Provider } from 'jotai'
 import { useHydrateAtoms } from 'jotai/utils'
@@ -89,3 +89,17 @@ export const setupComponentWithStateProviderUnderTest = (
       {component}
     </TestProvider>,
   )
+
+/**
+ * Fire toggle event
+ * @param detailsElement Details element
+ */
+export const fireToggleEvent = (detailsElement: HTMLDetailsElement): void => {
+  fireEvent(
+    detailsElement,
+    new Event('toggle', {
+      bubbles: true,
+      cancelable: true,
+    }),
+  )
+}

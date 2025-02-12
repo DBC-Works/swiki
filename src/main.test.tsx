@@ -7,7 +7,11 @@ import { describe, expect, it } from 'vitest'
 import './i18n'
 import { routeTree } from './routeTree.gen'
 import type { PageData, PageSet } from './states/pages/types'
-import { type SetUpResult, setupComponentWithStateProviderUnderTest } from './testUtils'
+import {
+  type SetUpResult,
+  fireToggleEvent,
+  setupComponentWithStateProviderUnderTest,
+} from './testUtils'
 import type { NonEmptyArray } from './types'
 
 describe('route', () => {
@@ -23,6 +27,12 @@ describe('route', () => {
             title: 'Content page',
             content: 'Content page content',
             dateAndTime: '2025-01-01T00:00:00Z',
+          },
+          {
+            language: 'en',
+            title: 'Content page(1st)',
+            content: 'Content page content',
+            dateAndTime: '2024-12-31T00:00:00Z',
           },
         ] as NonEmptyArray<PageData>,
       },
@@ -73,6 +83,9 @@ describe('route', () => {
         { from: 'Page', to: 'FrontPage', fromPath: '/pages/Content%20page' },
         { from: 'Page', to: 'Pages', fromPath: '/pages/Content%20page' },
         { from: 'Page', to: 'History', fromPath: '/pages/Content%20page' },
+        { from: 'Page', to: 'FrontPage', fromPath: '/pages/Content%20page/diff/2/1' },
+        { from: 'Page', to: 'Pages', fromPath: '/pages/Content%20page/diff/2/1' },
+        { from: 'Page', to: 'History', fromPath: '/pages/Content%20page/diff/2/1' },
       ])(
         'should move to $to page from $from when $heading button in app bar is pressed',
         async ({ to, fromPath }) => {
@@ -188,6 +201,76 @@ describe('route', () => {
 
       // assert
       expect(await screen.findByRole('heading', { name: 'Pages', level: 2 })).toBeInTheDocument()
+    })
+
+    it.for([
+      { targetRevision: 2, selectRevision: 1 },
+      { targetRevision: 1, selectRevision: 2 },
+    ])(
+      'should move to diff page when revision selector in page history item is selected',
+      async ({ targetRevision, selectRevision }) => {
+        // arrange
+        await setup('/pages/Content%20page', initialPageSet)
+        fireToggleEvent(screen.getByText(/update at/).closest('details') as HTMLDetailsElement)
+        const re = new RegExp(`Rev.${targetRevision}:`)
+        const listItem = screen.getByText(re).closest('li') as HTMLLIElement
+        const select = getByRole(listItem, 'combobox', { name: 'Compare with...' })
+        await userEvent.click(select)
+
+        // act
+        await userEvent.click(screen.getByText(`Rev.${selectRevision}`))
+
+        // assert
+        expect(
+          screen.getByRole('heading', {
+            name: 'Diff between Rev.1 and Rev.2 of “Content page”',
+            level: 2,
+          }),
+        ).toBeInTheDocument()
+      },
+    )
+  })
+
+  describe('Page diff page', () => {
+    it('should move to pages page if the specified title page does not exist', async () => {
+      // arrange & act
+      await setup('/pages/NotExist/diff/2/1', initialPageSet)
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'Pages', level: 2 })).toBeInTheDocument()
+    })
+
+    it.for([
+      { from: 'NaN', to: 'NaN' },
+      { from: 1, to: 'NaN' },
+      { from: 'NaN', to: 2 },
+      { from: 2, to: 2 },
+      { from: 0, to: 3 },
+      { from: 3, to: 0 },
+      { from: 1, to: -1 },
+      { from: -1, to: 2 },
+    ])(
+      'should move to the specified title page if the title exists but the revision is invalid',
+      async ({ from, to }) => {
+        // arrange & act
+        await setup(`/pages/Content%20page/diff/${to}/${from}`, initialPageSet)
+
+        // assert
+        expect(
+          await screen.findByRole('heading', { name: 'Content page', level: 2 }),
+        ).toBeInTheDocument()
+      },
+    )
+
+    it('should move to the specified title page if the link pressed', async () => {
+      // arrange
+      await setup('/pages/Content%20page/diff/2/1', initialPageSet)
+
+      // act
+      await userEvent.click(screen.getByText('Back to “Content page”'))
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'Content page', level: 2 })).toBeInTheDocument()
     })
   })
 
@@ -367,6 +450,27 @@ describe('route', () => {
 
       // assert
       expect(await screen.findByText(/Updated FrontPage content\./)).toBeInTheDocument()
+    })
+
+    it('should not show discard confirm dialog when FrontPage button in app bar pressed after update content title', async () => {
+      // arrange
+      await setup('/pages/Content%20page', initialPageSet)
+      await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
+      await userEvent.type(screen.getByRole('textbox', { name: 'Title' }), '(updated)')
+      await userEvent.click(screen.getByRole('button', { name: 'OK' }))
+      expect(
+        await screen.findByRole('heading', { name: 'Content page(updated)', level: 2 }),
+      ).toBeInTheDocument()
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'FrontPage' }))
+
+      // assert
+      await waitFor(() => {
+        expect(
+          screen.queryByText('Are you sure you want to discard your edits?'),
+        ).not.toBeInTheDocument()
+      })
     })
   })
 })
