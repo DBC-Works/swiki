@@ -83,6 +83,9 @@ describe('route', () => {
         { from: 'Page', to: 'FrontPage', fromPath: '/pages/Content%20page' },
         { from: 'Page', to: 'Pages', fromPath: '/pages/Content%20page' },
         { from: 'Page', to: 'History', fromPath: '/pages/Content%20page' },
+        { from: 'Page', to: 'FrontPage', fromPath: '/pages/Content%20page/diff/2/1' },
+        { from: 'Page', to: 'Pages', fromPath: '/pages/Content%20page/diff/2/1' },
+        { from: 'Page', to: 'History', fromPath: '/pages/Content%20page/diff/2/1' },
       ])(
         'should move to $to page from $from when $heading button in app bar is pressed',
         async ({ to, fromPath }) => {
@@ -226,6 +229,49 @@ describe('route', () => {
         ).toBeInTheDocument()
       },
     )
+  })
+
+  describe('Page diff page', () => {
+    it('should move to pages page if the specified title page does not exist', async () => {
+      // arrange & act
+      await setup('/pages/NotExist/diff/2/1', initialPageSet)
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'Pages', level: 2 })).toBeInTheDocument()
+    })
+
+    it.for([
+      { from: 'NaN', to: 'NaN' },
+      { from: 1, to: 'NaN' },
+      { from: 'NaN', to: 2 },
+      { from: 2, to: 2 },
+      { from: 0, to: 3 },
+      { from: 3, to: 0 },
+      { from: 1, to: -1 },
+      { from: -1, to: 2 },
+    ])(
+      'should move to the specified title page if the title exists but the revision is invalid',
+      async ({ from, to }) => {
+        // arrange & act
+        await setup(`/pages/Content%20page/diff/${to}/${from}`, initialPageSet)
+
+        // assert
+        expect(
+          await screen.findByRole('heading', { name: 'Content page', level: 2 }),
+        ).toBeInTheDocument()
+      },
+    )
+
+    it('should move to the specified title page if the link pressed', async () => {
+      // arrange
+      await setup('/pages/Content%20page/diff/2/1', initialPageSet)
+
+      // act
+      await userEvent.click(screen.getByText('Back to “Content page”'))
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'Content page', level: 2 })).toBeInTheDocument()
+    })
   })
 
   describe('Add new page', () => {

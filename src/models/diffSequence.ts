@@ -169,7 +169,7 @@ export type SubsequenceType = (typeof SubsequenceTypes)[keyof typeof Subsequence
 /**
  * Subsequence info
  */
-type Subsequence = {
+export type Subsequence = {
   /**
    * Type
    */

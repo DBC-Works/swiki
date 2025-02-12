@@ -25,7 +25,7 @@ export const useExtraSmallWidth = (): boolean =>
   useMediaQuery(useTheme().breakpoints.up('sm')) === false
 
 /**
- * Gets border color
+ * Get border color
  * @returns Border color
  */
 export const useMaterialUiBorderColor = () =>
