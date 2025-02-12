@@ -15,16 +15,12 @@ import { useTranslation } from 'react-i18next'
 import { type PageData, PathTypes } from '../../states/pages/types'
 import type { NonEmptyArray } from '../../types'
 import { useMoveTo, useRouterParams } from '../adapters/hooks'
+import { Revision } from '../atoms/Revision'
 import { Time } from '../atoms/Time'
 import { useExtraSmallWidth, usePageWithSpecifiedTitle } from '../hooks/hooks'
 import { PageContentViewer } from '../molecules/PageContentViewer'
 import { PageUpdateInfo } from '../molecules/PageUpdateInfo'
 import { Page as PageTemplate } from '../templates/Page'
-
-const Revision: React.FC<React.ComponentProps<'span'>> = ({ children }): JSX.Element => {
-  const { t } = useTranslation()
-  return <>{t('Rev.{{revision}}', { revision: children })}</>
-}
 
 type ComparisonPageSelectMenuItemProps = {
   escapedPageTitle: string
