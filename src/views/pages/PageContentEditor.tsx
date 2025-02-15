@@ -16,7 +16,7 @@ import { clearEditingInfoAtom, editingInfoAtom, setEditingInfoAtom } from '../..
 import { addPageDataAtom } from '../../states/pages/atoms'
 import { type PageEditSource, PageTypes, PathTypes } from '../../states/pages/types'
 import type { ToPath } from '../adapters/Link'
-import { useMoveTo, useReturnPath } from '../adapters/hooks'
+import { useMoveTo, useReturnPath, useSearchParams } from '../adapters/hooks'
 import { useMaterialUiBorderColor, usePageEditSource, useUsableTitle } from '../hooks/hooks'
 import { ModalOperationButtonsBar } from '../molecules/ModalOperationButtonsBar'
 import { PageContentViewer } from '../molecules/PageContentViewer'
@@ -213,6 +213,20 @@ const CSS_SECTION = css({
   },
 })
 
+const getInitialTitle = (
+  isEditMode: boolean,
+  pageTitle: string | undefined,
+  title: string | undefined,
+): string => {
+  if (isEditMode) {
+    return pageTitle as string
+  }
+  if (title) {
+    return decodeURIComponent(title)
+  }
+  return ''
+}
+
 type Props = React.ComponentProps<typeof Section> & {
   pageTitle?: string
 }
@@ -225,6 +239,7 @@ type Props = React.ComponentProps<typeof Section> & {
  */
 export const PageContentEditor: React.FC<Props> = ({ pageTitle }): JSX.Element => {
   const { t, i18n } = useTranslation()
+  const { title } = useSearchParams()
   const moveTo = useMoveTo()
   const returnPath = useReturnPath()
   const addPageData = useSetAtom(addPageDataAtom)
@@ -237,10 +252,11 @@ export const PageContentEditor: React.FC<Props> = ({ pageTitle }): JSX.Element =
   const { editing } = useAtomValue(editingInfoAtom)
   const setEditingInfo = useSetAtom(setEditingInfoAtom)
   const [showConfirm, setShowConfirm] = useState(false)
-  const [editingTitle, setEditingTitle] = useState(isEditMode ? (pageTitle as string) : '')
+  const initialTitle = getInitialTitle(isEditMode, pageTitle, title)
+  const [editingTitle, setEditingTitle] = useState(initialTitle)
   const editingContent = useRef({ content })
 
-  const isTitleUsable = useUsableTitle(pageTitle ?? '', editingTitle)
+  const isTitleUsable = useUsableTitle(initialTitle ?? '', editingTitle)
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (editing) {
