@@ -9,3 +9,6 @@ export const useReturnPath = () => {
 export const useMoveTo = () => {
   return () => {}
 }
+export const useSearchParams = () => {
+  return {}
+}

@@ -195,12 +195,12 @@ describe('route', () => {
   })
 
   describe('Content page', () => {
-    it('should move to page list page if there is no page with the specified title', async () => {
+    it('should move to new page if there is no page with the specified title', async () => {
       // arrange & act
       await setup('/pages/NotExist', initialPageSet)
 
       // assert
-      expect(await screen.findByRole('heading', { name: 'Pages', level: 2 })).toBeInTheDocument()
+      expect(await screen.findByRole('heading', { name: 'New page', level: 2 })).toBeInTheDocument()
     })
 
     it.for([
@@ -229,6 +229,110 @@ describe('route', () => {
         ).toBeInTheDocument()
       },
     )
+
+    it('should move to the specified page when the link of the page in content clicked', async () => {
+      // arrange
+      const pageSet = {
+        frontPage: null,
+        sandBox: null,
+        pages: [
+          {
+            id: crypto.randomUUID(),
+            pageDataHistory: [
+              {
+                language: 'en',
+                title: 'Source page',
+                content:
+                  '[External link](https://www.example.com)\nPlease click [[Destination page]].\nPlease do not click [[Not exist page]].',
+                dateAndTime: '2025-02-01T00:00:00Z',
+              },
+            ] as NonEmptyArray<PageData>,
+          },
+          {
+            id: crypto.randomUUID(),
+            pageDataHistory: [
+              {
+                language: 'en',
+                title: 'Destination page',
+                content: 'Destination page content.',
+                dateAndTime: '2025-01-01T00:00:00Z',
+              },
+            ] as NonEmptyArray<PageData>,
+          },
+        ],
+      }
+      await setup('/pages/Source%20page', pageSet)
+      expect(screen.getByRole('link', { name: 'Not exist page' })).toBeInTheDocument()
+
+      // act
+      await userEvent.click(screen.getByRole('link', { name: 'Destination page' }))
+
+      // assert
+      expect(
+        screen.getByRole('heading', {
+          name: 'Destination page',
+          level: 2,
+        }),
+      ).toBeInTheDocument()
+    })
+
+    it('should move to new page when the link of the page in content that does not exist clicked', async () => {
+      // arrange
+      const pageSet = {
+        frontPage: null,
+        sandBox: null,
+        pages: [
+          {
+            id: crypto.randomUUID(),
+            pageDataHistory: [
+              {
+                language: 'en',
+                title: 'Source page',
+                content: 'Please click [[Not exist page]] to add new page.',
+                dateAndTime: '2025-02-01T00:00:00Z',
+              },
+            ] as NonEmptyArray<PageData>,
+          },
+        ],
+      }
+      await setup('/pages/Source%20page', pageSet)
+
+      // act
+      await userEvent.click(screen.getByRole('link', { name: 'Not exist page' }))
+
+      // assert
+      expect(screen.getByRole('heading', { name: 'New page', level: 2 })).toBeInTheDocument()
+      expect(screen.getByDisplayValue('Not exist page')).toBeInTheDocument()
+    })
+
+    it('should translate the link markup to the "a" element with the "target" attribute with the value "_blank"', async () => {
+      // arrange & act
+      const pageSet = {
+        frontPage: null,
+        sandBox: null,
+        pages: [
+          {
+            id: crypto.randomUUID(),
+            pageDataHistory: [
+              {
+                language: 'en',
+                title: 'Page',
+                content: '[External link](https://www.example.com)',
+                dateAndTime: '2025-01-01T00:00:00Z',
+              },
+            ] as NonEmptyArray<PageData>,
+          },
+        ],
+      }
+      await setup('/pages/Page', pageSet)
+
+      // assert
+      const actual = screen.getByRole('link', {
+        name: 'External link',
+      })
+      expect(actual).toBeInTheDocument()
+      expect(actual).toHaveAttribute('target', '_blank')
+    })
   })
 
   describe('Page diff page', () => {

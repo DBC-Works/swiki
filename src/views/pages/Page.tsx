@@ -156,9 +156,9 @@ export const Page: React.FC = (): JSX.Element | null => {
 
   useEffect(() => {
     if (!latestPageData) {
-      moveTo(PathTypes.Pages)
+      moveTo(PathTypes.NewPage, title)
     }
-  }, [latestPageData, moveTo])
+  }, [latestPageData, moveTo, title])
 
   if (!latestPageData) {
     return null

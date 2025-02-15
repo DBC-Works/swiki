@@ -1,4 +1,4 @@
-import { useNavigate, useParams, useRouterState } from '@tanstack/react-router'
+import { useNavigate, useParams, useRouterState, useSearch } from '@tanstack/react-router'
 
 import type { ToPath } from './Link'
 
@@ -18,9 +18,18 @@ export const useReturnPath = (): string | undefined => {
  * Get move to specified path function
  * @returns Move to specified path function
  */
-export const useMoveTo = (): ((to: NonNullable<ToPath>) => void) => {
+export const useMoveTo = (): ((to: NonNullable<ToPath>, title?: string) => void) => {
   const navigate = useNavigate()
-  return (to) => {
-    navigate({ to })
+  return (to, title?) => {
+    navigate({ to, search: { title: title ? encodeURIComponent(title) : undefined } })
   }
 }
+
+/**
+ * Get search parameters
+ * @returns Search parameters
+ */
+export const useSearchParams = (): { title?: string } =>
+  useSearch({
+    strict: false,
+  })
