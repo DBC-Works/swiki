@@ -1,8 +1,7 @@
-import { useAtomValue } from 'jotai'
 import { useTranslation } from 'react-i18next'
 
-import { pageListAtom } from '../../states/pages/atoms'
 import { AddPageFab } from '../atoms/AddPageFab'
+import { SortOrderTypes, useSortedPages } from '../hooks/hooks'
 import { FabContainer } from '../organisms/FabContainer'
 import { PageInfoList } from '../organisms/PageInfoList'
 import { Section } from '../templates/Section'
@@ -13,18 +12,7 @@ import { Section } from '../templates/Section'
  */
 export const History: React.FC = (): JSX.Element => {
   const { t, i18n } = useTranslation()
-  const pages = useAtomValue(pageListAtom).sort(({ page: lhs }, { page: rhs }) => {
-    if (lhs === null && rhs === null) {
-      return 0
-    }
-    if (lhs === null) {
-      return 1
-    }
-    if (rhs === null) {
-      return -1
-    }
-    return lhs.dateAndTime < rhs.dateAndTime ? 1 : -1
-  })
+  const pages = useSortedPages(SortOrderTypes.UpdateTimeDesc)
 
   return (
     <Section>

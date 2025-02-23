@@ -128,7 +128,7 @@ describe('History component', () => {
       .getAllByRole('button')
       .map((button) => button.textContent)
       .filter((text) => text !== '')
-    const expected = ['Elder page(updated)', 'Older page', 'FrontPage', 'SandBox']
+    const expected = ['Elder page(updated)', 'Older page', 'SandBox', 'FrontPage']
     expect(actual).toHaveLength(expected.length)
     for (let index = 0; index < actual.length; ++index) {
       expect(actual[index]?.startsWith(expected[index])).toBeTruthy()

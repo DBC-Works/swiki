@@ -121,6 +121,16 @@ export type PageInfoForList = {
   page: PageData | null
 
   /**
+   * Create date and time
+   */
+  createDateAndTime: string | null
+
+  /**
+   * Last update date and time
+   */
+  lastUpdateDateAndTime: string | null
+
+  /**
    * Update count
    */
   updateCount: number | null

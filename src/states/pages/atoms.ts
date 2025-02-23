@@ -82,11 +82,17 @@ export const sandBoxAtom = atom((get) => {
  * Page list read-only atom
  */
 export const pageListAtom = atom((get): PageInfoForList[] =>
-  getFlattenPageList(get(pageSetAtom)).map(({ type, page }) => ({
-    type,
-    page: getLatestPageDataFrom(page) ?? null,
-    updateCount: page?.pageDataHistory.length ?? null,
-  })),
+  getFlattenPageList(get(pageSetAtom)).map(({ type, page }) => {
+    const latestPageData = getLatestPageDataFrom(page) ?? null
+    return {
+      type,
+      page: latestPageData,
+      createDateAndTime:
+        type !== PageTypes.Content ? null : (page?.pageDataHistory[0].dateAndTime ?? null),
+      lastUpdateDateAndTime: latestPageData?.dateAndTime ?? null,
+      updateCount: page?.pageDataHistory.length ?? null,
+    }
+  }),
 )
 
 /**
