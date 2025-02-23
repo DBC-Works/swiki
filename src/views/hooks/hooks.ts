@@ -7,12 +7,15 @@ import {
   frontPageAtom,
   latestPageTitlesAtom,
   pageEditSourcesAtom,
+  pageListAtom,
   sandBoxAtom,
 } from '../../states/pages/atoms'
 import {
   type Page,
   type PageEditSource,
+  type PageInfoForList,
   type PagePresentation,
+  type PageType,
   PageTypes,
 } from '../../states/pages/types'
 import { getTitleToDisplay } from '../i18n'
@@ -154,3 +157,89 @@ export const usePageEditSource = (pageTitle: string): PageEditSource => {
   }
   return pageEditSource
 }
+
+/**
+ * Compare page type
+ * @param lhs Page type of lhs
+ * @param rhs Page type of rhs
+ * @returns Compare result
+ */
+const comparePageTypeOrder = (lhs: PageType, rhs: PageType): number => {
+  switch (lhs) {
+    case PageTypes.FrontPage:
+      return -1
+    case PageTypes.SandBox:
+      return rhs === PageTypes.FrontPage ? 1 : -1
+    default:
+      return 0
+  }
+}
+
+/**
+ * Compare page order
+ * @param lhsType Page type of lhs
+ * @param lhsDateAndTime Date and time of lhs
+ * @param rhsType Page type of rhs
+ * @param rhsDateAndTime Date and time of rhs
+ * @returns Compare result
+ */
+const comparePageOrder = (
+  lhsType: PageType,
+  lhsDateAndTime: string | null,
+  rhsType: PageType,
+  rhsDateAndTime: string | null,
+): number => {
+  if (lhsDateAndTime === null && rhsDateAndTime === null) {
+    return comparePageTypeOrder(lhsType, rhsType)
+  }
+  if (lhsDateAndTime === null) {
+    return -1
+  }
+  if (rhsDateAndTime === null) {
+    return 1
+  }
+  return lhsDateAndTime.localeCompare(rhsDateAndTime)
+}
+
+/**
+ * Sort order type
+ */
+export const SortOrderTypes = {
+  /**
+   * Create time ascending
+   */
+  CreateTimeAsc: 'Create time(ascending)',
+
+  /**
+   * Create time descending
+   */
+  CreateTimeDesc: 'Create time(descending)',
+
+  /**
+   * Update time descending
+   */
+  UpdateTimeDesc: 'Update time(descending)',
+} as const satisfies Record<string, string>
+export type SortOrderType = (typeof SortOrderTypes)[keyof typeof SortOrderTypes]
+
+/**
+ * Get page info list
+ * @param sortOrder Sort order
+ * @returns Page info list
+ */
+export const useSortedPages = (sortOrder: SortOrderType): PageInfoForList[] =>
+  useAtomValue(pageListAtom).toSorted((lhs, rhs) => {
+    switch (sortOrder) {
+      case SortOrderTypes.CreateTimeAsc:
+        return comparePageOrder(lhs.type, lhs.createDateAndTime, rhs.type, rhs.createDateAndTime)
+      case SortOrderTypes.CreateTimeDesc:
+        return -comparePageOrder(lhs.type, lhs.createDateAndTime, rhs.type, rhs.createDateAndTime)
+      case SortOrderTypes.UpdateTimeDesc:
+        return -comparePageOrder(
+          lhs.type,
+          lhs.lastUpdateDateAndTime,
+          rhs.type,
+          rhs.lastUpdateDateAndTime,
+        )
+    }
+  })

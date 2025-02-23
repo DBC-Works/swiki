@@ -2,7 +2,7 @@ import ArticleIcon from '@mui/icons-material/Article'
 import { Avatar, List, ListItemAvatar, ListItemButton, ListItemText, css } from '@mui/material'
 import { useCallback } from 'react'
 
-import type { PageInfoForList } from '../../states/pages/types'
+import type { PageData, PageInfoForList, PageType } from '../../states/pages/types'
 import { useMoveTo } from '../adapters/hooks'
 import { getLanguage, getTitleToDisplay } from '../i18n'
 import { PageUpdateInfo } from '../molecules/PageUpdateInfo'
@@ -26,7 +26,22 @@ const SingleRowText: React.FC<React.ComponentProps<'span'>> = ({ children }) => 
   return <span css={CSS}>{children}</span>
 }
 
-type PageInfoListRowProps = PageInfoForList
+type PageInfoListRowProps = {
+  /**
+   * Page type
+   */
+  type: PageType
+
+  /**
+   * Page data
+   */
+  page: PageData | null
+
+  /**
+   * Update count
+   */
+  updateCount: number | null
+}
 
 /**
  * Page info list row component
