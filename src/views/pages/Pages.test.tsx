@@ -1,6 +1,6 @@
 import type { PageSet } from '../../states/pages/types'
 
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { setupComponentWithStateProviderUnderTest } from '../../testUtils'
@@ -184,5 +184,60 @@ describe('Pages component', () => {
         expect(actual).toEqual(expected)
       },
     )
+  })
+
+  describe('filter', () => {
+    it('should be able to type filtering keyword', () => {
+      // arrange & act
+      setup()
+
+      // assert
+      expect(screen.getByRole('searchbox')).toBeInTheDocument()
+    })
+
+    it('should filter the page list when keyword typed', async () => {
+      // arrange
+      setup({
+        frontPage: null,
+        sandBox: null,
+        pages: [
+          {
+            id: crypto.randomUUID(),
+            pageDataHistory: [
+              {
+                title: 'Added page',
+                language: 'en',
+                content: 'personal wiki application',
+                dateAndTime: '2025-03-01T12:34:56',
+              },
+            ],
+          },
+        ],
+      })
+
+      // act
+      await userEvent.type(screen.getByRole('searchbox'), 'personal wiki application')
+
+      // assert
+      await waitFor(() => {
+        expect(screen.getAllByRole('button')).toHaveLength(3)
+      })
+      const actual = screen
+        .getAllByRole('button')
+        .filter((button) => button.textContent)
+        .map((button) => button.textContent)
+      expect(actual).toEqual(['FrontPage-', 'Added page1st update at Mar 1, 2025 12:34 PM'])
+    })
+
+    it('should report no match if there is no page containing the keyword', async () => {
+      // arrange
+      setup()
+
+      // act
+      await userEvent.type(screen.getByRole('searchbox'), 'invalid keyword')
+
+      // assert
+      expect(await screen.findByText('No match')).toBeInTheDocument()
+    })
   })
 })

@@ -4,9 +4,11 @@ pre-commit:
   commands:
     format:
       glob: '*.{js,ts,jsx,tsx,json}'
+      exclude: 'src/routeTree.gen.ts'
       run: npx @biomejs/biome format --write {staged_files}
     lint:
       glob: '*.{js,ts,jsx,tsx,json}'
+      exclude: 'src/routeTree.gen.ts'
       run: npx @biomejs/biome lint {staged_files}
     stage:
       run: git add {staged_files}

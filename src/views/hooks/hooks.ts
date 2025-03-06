@@ -202,6 +202,29 @@ const comparePageOrder = (
 }
 
 /**
+ * Create page info comparator
+ * @param sortOrder Sort order
+ * @returns Page info comparator
+ */
+const createPageInfoComparator =
+  (sortOrder: SortOrderType): ((lhs: PageInfoForList, rhs: PageInfoForList) => number) =>
+  (lhs: PageInfoForList, rhs: PageInfoForList) => {
+    switch (sortOrder) {
+      case SortOrderTypes.CreateTimeAsc:
+        return comparePageOrder(lhs.type, lhs.createDateAndTime, rhs.type, rhs.createDateAndTime)
+      case SortOrderTypes.CreateTimeDesc:
+        return -comparePageOrder(lhs.type, lhs.createDateAndTime, rhs.type, rhs.createDateAndTime)
+      case SortOrderTypes.UpdateTimeDesc:
+        return -comparePageOrder(
+          lhs.type,
+          lhs.lastUpdateDateAndTime,
+          rhs.type,
+          rhs.lastUpdateDateAndTime,
+        )
+    }
+  }
+
+/**
  * Sort order type
  */
 export const SortOrderTypes = {
@@ -228,18 +251,38 @@ export type SortOrderType = (typeof SortOrderTypes)[keyof typeof SortOrderTypes]
  * @returns Page info list
  */
 export const useSortedPages = (sortOrder: SortOrderType): PageInfoForList[] =>
-  useAtomValue(pageListAtom).toSorted((lhs, rhs) => {
-    switch (sortOrder) {
-      case SortOrderTypes.CreateTimeAsc:
-        return comparePageOrder(lhs.type, lhs.createDateAndTime, rhs.type, rhs.createDateAndTime)
-      case SortOrderTypes.CreateTimeDesc:
-        return -comparePageOrder(lhs.type, lhs.createDateAndTime, rhs.type, rhs.createDateAndTime)
-      case SortOrderTypes.UpdateTimeDesc:
-        return -comparePageOrder(
-          lhs.type,
-          lhs.lastUpdateDateAndTime,
-          rhs.type,
-          rhs.lastUpdateDateAndTime,
-        )
-    }
-  })
+  useAtomValue(pageListAtom).toSorted(createPageInfoComparator(sortOrder))
+
+/**
+ *
+ * Get filtered page info list
+ * @param keyword Keyword
+ * @param sortOrder Sort order
+ * @returns Page info list
+ */
+export const useFilteredPages = (keyword: string, sortOrder: SortOrderType): PageInfoForList[] => {
+  const { t } = useTranslation()
+  const comparator = createPageInfoComparator(sortOrder)
+  const pages = useAtomValue(pageListAtom)
+  return (
+    keyword.length === 0
+      ? pages
+      : pages.filter((pageInfo) => {
+          let content = pageInfo.page?.content
+          if (content === undefined) {
+            switch (pageInfo.type) {
+              case PageTypes.FrontPage:
+                content = t('initialFrontPage')
+                break
+              case PageTypes.SandBox:
+                content = t('initialSandBox')
+                break
+              default:
+                content = ''
+                break
+            }
+          }
+          return pageInfo.page?.title.includes(keyword) || content.includes(keyword)
+        })
+  ).toSorted(comparator)
+}
