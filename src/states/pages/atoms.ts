@@ -6,6 +6,7 @@ import { atomWithStorage } from 'jotai/utils'
 import type { NonEmptyArray } from '../../types'
 import { pageSet } from './states'
 import {
+  DataFormatVersions,
   type Page,
   type PageData,
   type PageEditSource,
@@ -189,4 +190,14 @@ export const addPageDataAtom = atom(
       pages,
     })
   },
+)
+
+/**
+ * get page data for export read-only atom
+ */
+export const getPageDataForExportAtom = atom((get) =>
+  JSON.stringify({
+    version: DataFormatVersions.v202503,
+    pages: getFlattenPageList(get(pageSetAtom)),
+  }),
 )

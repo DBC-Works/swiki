@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import {
   flattenPageListAtom,
   frontPageAtom,
+  getPageDataForExportAtom,
   latestPageTitlesAtom,
   pageEditSourcesAtom,
   pageListAtom,
@@ -254,7 +255,6 @@ export const useSortedPages = (sortOrder: SortOrderType): PageInfoForList[] =>
   useAtomValue(pageListAtom).toSorted(createPageInfoComparator(sortOrder))
 
 /**
- *
  * Get filtered page info list
  * @param keyword Keyword
  * @param sortOrder Sort order
@@ -285,4 +285,15 @@ export const useFilteredPages = (keyword: string, sortOrder: SortOrderType): Pag
           return pageInfo.page?.title.includes(keyword) || content.includes(keyword)
         })
   ).toSorted(comparator)
+}
+
+/**
+ * Get export data blob
+ * @returns Export data blob
+ */
+export const useExportDataBlob = (): Blob => {
+  const exportData = useAtomValue(getPageDataForExportAtom)
+  return new Blob([exportData], {
+    type: 'application/json',
+  })
 }

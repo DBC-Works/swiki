@@ -166,3 +166,11 @@ export const PathTypes = {
   History: '/history',
 } as const satisfies Record<string, string>
 export type PathType = (typeof PathTypes)[keyof typeof PathTypes]
+
+/**
+ * Data format versions
+ */
+export const DataFormatVersions = {
+  v202503: 202503,
+} as const satisfies Record<string, number>
+export type DataFormatVersion = (typeof DataFormatVersions)[keyof typeof DataFormatVersions]

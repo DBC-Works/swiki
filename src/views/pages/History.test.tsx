@@ -1,6 +1,7 @@
 import type { PageSet } from '../../states/pages/types'
 
 import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
 import { setupComponentWithStateProviderUnderTest } from '../../testUtils'
@@ -10,6 +11,12 @@ vi.mock('../adapters/Link')
 import { History } from './History'
 
 describe('History component', () => {
+  const getAllPageButtons = () =>
+    screen
+      .getAllByRole('button')
+      .map((button) => button.textContent)
+      .filter((text) => text !== '' && text !== 'Export')
+
   const setup = (initialPageSet: PageSet | null = null) =>
     setupComponentWithStateProviderUnderTest(<History />, initialPageSet, null)
 
@@ -18,7 +25,7 @@ describe('History component', () => {
     setup()
 
     // assert
-    expect(screen.getAllByRole('button')).toHaveLength(3)
+    expect(getAllPageButtons()).toHaveLength(2)
     expect(screen.getByRole('button', { name: /^FrontPage.+-$/ })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /^SandBox.+-$/ })).toBeInTheDocument()
   })
@@ -70,7 +77,7 @@ describe('History component', () => {
     })
 
     // assert
-    expect(screen.getAllByRole('button')).toHaveLength(4)
+    expect(getAllPageButtons()).toHaveLength(3)
     expect(
       screen.getByRole('button', {
         name: /^FrontPage\(Updated\).+1st update at Jan 1, 2024 12:34 PM$/,
@@ -124,14 +131,37 @@ describe('History component', () => {
     })
 
     // assert
-    const actual = screen
-      .getAllByRole('button')
-      .map((button) => button.textContent)
-      .filter((text) => text !== '')
+    const actual = getAllPageButtons()
     const expected = ['Elder page(updated)', 'Older page', 'SandBox', 'FrontPage']
     expect(actual).toHaveLength(expected.length)
     for (let index = 0; index < actual.length; ++index) {
       expect(actual[index]?.startsWith(expected[index])).toBeTruthy()
     }
+  })
+
+  describe('export', () => {
+    it('should show the "Export" button and hide the "Download" button', () => {
+      // arrange & act
+      setup()
+
+      // assert
+      expect(screen.getByRole('button', { name: 'Export' })).not.toBeDisabled()
+      expect(screen.getByRole('link', { name: 'Download' })).toHaveAttribute('href', '#')
+    })
+
+    it('should show the "Download" button and hide the "Export" button if the "Export" button pressed', async () => {
+      // arrange
+      setup()
+
+      // act
+      await userEvent.click(screen.getByRole('button', { name: 'Export' }))
+
+      // assert
+      expect(screen.getByRole('link', { name: 'Download' })).toHaveAttribute(
+        'href',
+        expect.stringMatching(/^blob:/),
+      )
+      expect(screen.getByRole('button', { name: 'Export' })).toBeDisabled()
+    })
   })
 })
