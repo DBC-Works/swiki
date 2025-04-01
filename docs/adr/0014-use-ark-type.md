@@ -8,12 +8,7 @@ Accepted
 
 ## Context
 
-<!--
-We need date and time handling library.
-
-- Current JavaScript date and time handling capabilities are not enough
-- [Temporal](https://tc39.es/proposal-temporal/docs/index.html), which is still in the works, doesn't seem to be stable yet
-  -->
+We need runtime type validation library for import data.
 
 ## Decision
 
