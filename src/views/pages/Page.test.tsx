@@ -2,9 +2,8 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { PageData, PageSet } from '../../states/pages/types'
+import type { PageSet } from '../../states/pages/types'
 import { fireToggleEvent, setupComponentWithStateProviderUnderTest } from '../../testUtils'
-import type { NonEmptyArray } from '../../types'
 vi.mock('../adapters/hooks.ts')
 vi.mock('../adapters/Link')
 
@@ -30,7 +29,7 @@ describe('Page component', () => {
             content: 'Initial content page content',
             dateAndTime: '2024-12-31T00:00:00Z',
           },
-        ] as NonEmptyArray<PageData>,
+        ],
       },
     ],
   }
@@ -100,7 +99,7 @@ describe('Page component', () => {
                 content: 'Content page content',
                 dateAndTime: '2025-01-01T00:00:00Z',
               },
-            ] as NonEmptyArray<PageData>,
+            ],
           },
         ],
       })
@@ -139,7 +138,7 @@ describe('Page component', () => {
                 content: 'Content page content',
                 dateAndTime: '2024-12-31T12:34:56Z',
               },
-            ] as NonEmptyArray<PageData>,
+            ],
           },
         ],
       })

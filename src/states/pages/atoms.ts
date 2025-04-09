@@ -3,7 +3,6 @@ import utc from 'dayjs/plugin/utc'
 import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 
-import type { NonEmptyArray } from '../../types'
 import { pageSet } from './states'
 import {
   DataFormatVersions,
@@ -167,7 +166,7 @@ export const addPageDataAtom = atom(
     } else {
       const newPage = {
         id: crypto.randomUUID(),
-        pageDataHistory: [newPageData] as NonEmptyArray<PageData>,
+        pageDataHistory: [newPageData],
       }
       switch (type) {
         case PageTypes.FrontPage:

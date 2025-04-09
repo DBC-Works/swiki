@@ -9,11 +9,11 @@ import {
   Select,
   Typography,
 } from '@mui/material'
+import { type } from 'arktype'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { type PageData, PathTypes } from '../../states/pages/types'
-import type { NonEmptyArray } from '../../types'
+import { PageData, type Page as PageType, PathTypes } from '../../states/pages/types'
 import { useMoveTo, useRouterParams } from '../adapters/hooks'
 import { Revision } from '../atoms/Revision'
 import { Time } from '../atoms/Time'
@@ -85,10 +85,11 @@ const ComparisonPageSelect: React.FC<ComparisonPageSelectProps> = ({
   )
 }
 
-type PageHistoryProps = {
-  escapedPageTitle: string
-  pageDataHistory: NonEmptyArray<PageData>
-}
+const PageHistoryProps = type({
+  escapedPageTitle: 'string',
+  pageDataHistory: PageData.array().atLeastLength(1),
+})
+type PageHistoryProps = typeof PageHistoryProps.infer
 
 const PageHistory: React.FC<PageHistoryProps> = ({
   escapedPageTitle,
@@ -151,7 +152,7 @@ export const Page: React.FC = (): JSX.Element | null => {
   const { pageTitle } = useRouterParams({ from: '/pages/$pageTitle/' })
   const moveTo = useMoveTo()
   const title = decodeURIComponent(pageTitle)
-  const page = usePageWithSpecifiedTitle(title)
+  const page = usePageWithSpecifiedTitle(title) as PageType
   const latestPageData = page?.pageDataHistory[0] ?? null
 
   useEffect(() => {
@@ -171,10 +172,7 @@ export const Page: React.FC = (): JSX.Element | null => {
       <PageContentViewer lang={language} pageTitle={title}>
         {content}
       </PageContentViewer>
-      <PageHistory
-        escapedPageTitle={pageTitle}
-        pageDataHistory={page?.pageDataHistory as NonEmptyArray<PageData>}
-      />
+      <PageHistory escapedPageTitle={pageTitle} pageDataHistory={page.pageDataHistory} />
     </PageTemplate>
   )
 }
