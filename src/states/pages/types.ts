@@ -176,6 +176,15 @@ export const PathType = type.valueOf(PathTypes)
 export type PathType = (typeof PathTypes)[keyof typeof PathTypes]
 
 /**
+ * Typed page
+ */
+const TypedPage = type({
+  type: PageType,
+  page: Page.or(type.null),
+})
+export type TypedPage = typeof TypedPage.infer
+
+/**
  * Data format versions
  */
 export const DataFormatVersions = {
@@ -183,3 +192,12 @@ export const DataFormatVersions = {
 } as const satisfies Record<string, number>
 export const DataFormatVersion = type.valueOf(DataFormatVersions)
 export type DataFormatVersion = (typeof DataFormatVersions)[keyof typeof DataFormatVersions]
+
+/**
+ * Versioned page list
+ */
+export const VersionedPageList = type({
+  version: DataFormatVersion,
+  pages: TypedPage.array(),
+})
+export type VersionedPageList = typeof VersionedPageList.infer
