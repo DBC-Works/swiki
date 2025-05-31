@@ -5,4 +5,5 @@ import type { EditingInfo } from './types'
  */
 export const editingInfo: EditingInfo = {
   editing: false,
+  processing: false,
 }

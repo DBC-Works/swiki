@@ -2,12 +2,12 @@ import { css } from '@emotion/react'
 import HomeIcon from '@mui/icons-material/Home'
 import ListIcon from '@mui/icons-material/List'
 import ListAltIcon from '@mui/icons-material/ListAlt'
-import { AppBar, Button, IconButton, Toolbar, Typography } from '@mui/material'
+import { AppBar, Button, IconButton, LinearProgress, Toolbar, Typography } from '@mui/material'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { clearEditingInfoAtom, editingInfoAtom } from '../../states/edit/atoms'
+import { clearEditingInfoAtom, editingInfoAtom, inProcessingAtom } from '../../states/edit/atoms'
 import { PathTypes } from '../../states/pages/types'
 import { useMoveTo } from '../adapters/hooks'
 import { useExtraSmallWidth } from '../hooks/hooks'
@@ -29,7 +29,7 @@ const MenuItem: React.FC<{
 }> = ({ children, icon, to }): JSX.Element => {
   const xs = useExtraSmallWidth()
   const moveTo = useMoveTo()
-  const { editing } = useAtomValue(editingInfoAtom)
+  const { editing, processing } = useAtomValue(editingInfoAtom)
   const clearEditingInfo = useSetAtom(clearEditingInfoAtom)
   const [showConfirm, setShowConfirm] = useState(false)
 
@@ -52,11 +52,17 @@ const MenuItem: React.FC<{
   return (
     <>
       {xs ? (
-        <IconButton aria-label={children} onClick={handleClick}>
+        <IconButton aria-label={children} disabled={processing} onClick={handleClick}>
           <span css={[CSS_LINK_CONTAINER, CSS_MENU_ITEM_ICON_CONTAINER]}>{icon}</span>
         </IconButton>
       ) : (
-        <Button variant="contained" disableElevation startIcon={icon} onClick={handleClick}>
+        <Button
+          variant="contained"
+          disableElevation
+          startIcon={icon}
+          disabled={processing}
+          onClick={handleClick}
+        >
           <span css={CSS_LINK_CONTAINER}>{children}</span>
         </Button>
       )}
@@ -76,6 +82,7 @@ const MenuItem: React.FC<{
  */
 export const TopAppBar: React.FC = (): JSX.Element => {
   const { t } = useTranslation()
+  const inProcessing = useAtomValue(inProcessingAtom)
 
   return (
     <AppBar position="static" sx={{ paddingTop: 'env(safe-area-inset-top)' }}>
@@ -95,6 +102,7 @@ export const TopAppBar: React.FC = (): JSX.Element => {
           </MenuItem>
         </nav>
       </Toolbar>
+      <LinearProgress css={{ visibility: inProcessing ? 'visible' : 'hidden' }} />
     </AppBar>
   )
 }

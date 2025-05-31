@@ -41,7 +41,7 @@ describe('TopAppBar component', () => {
     'should show discard confirmation dialog when %s button is pressed in editing',
     async (pageTitle: string) => {
       // arrange
-      setup({ editing: true })
+      setup({ editing: true, processing: false })
 
       // act
       await userEvent.click(screen.getByRole('button', { name: pageTitle }))
@@ -55,7 +55,7 @@ describe('TopAppBar component', () => {
     'should hide discard confirmation dialog when try to move %s page in editing but Cancel button is pressed',
     async (pageTitle: string) => {
       // arrange
-      setup({ editing: true })
+      setup({ editing: true, processing: false })
 
       // act
       await userEvent.click(screen.getByRole('button', { name: pageTitle }))
