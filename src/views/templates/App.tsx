@@ -2,6 +2,7 @@ import { css } from '@emotion/react'
 import { useTranslation } from 'react-i18next'
 
 import { GlobalStyles } from '../GlobalStyles'
+import { TemporaryNotification } from '../molecules/TemporaryNotification'
 import { TopAppBar } from '../organisms/TopAppBar'
 
 const CSS_CONTAINER = css({
@@ -36,6 +37,7 @@ export const App: React.FC<Props> = ({ children }): JSX.Element => {
         <TopAppBar />
       </div>
       <main css={CSS_MAIN}>{children}</main>
+      <TemporaryNotification />
     </div>
   )
 }
