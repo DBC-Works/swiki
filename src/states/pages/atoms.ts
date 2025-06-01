@@ -210,7 +210,6 @@ export const getPageDataForExportAtom = atom((get) =>
 export const mergeImportPageDataAtom = atom(
   null,
   async (get, set, versionedPageList: VersionedPageList) => {
-    await new Promise((resolve) => setTimeout(resolve, 10000))
     set(pageSetAtom, generateMergedPageSet(versionedPageList, get(pageSetAtom)))
   },
 )
