@@ -1,5 +1,4 @@
-import type { PageData, PageSet } from '../../states/pages/types'
-import type { NonEmptyArray } from '../../types'
+import type { PageSet } from '../../states/pages/types'
 
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -72,7 +71,7 @@ describe('PageContentEditor component', () => {
               content: 'First page content',
               dateAndTime: '2100-01-01T00:00:00Z',
             },
-          ] as NonEmptyArray<PageData>,
+          ],
         },
       ],
     }

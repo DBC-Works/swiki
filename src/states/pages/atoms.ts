@@ -3,7 +3,7 @@ import utc from 'dayjs/plugin/utc'
 import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 
-import type { NonEmptyArray } from '../../types'
+import { generateMergedPageSet } from './functions'
 import { pageSet } from './states'
 import {
   DataFormatVersions,
@@ -14,6 +14,8 @@ import {
   type PageSet,
   type PageType,
   PageTypes,
+  type TypedPage,
+  type VersionedPageList,
 } from './types'
 
 dayjs.extend(utc)
@@ -31,7 +33,7 @@ const getLatestPageDataFrom = (page: Page | null): PageData | null =>
  * @param pageSet PageSet
  * @returns Flatten page list
  */
-const getFlattenPageList = (pageSet: PageSet): Array<{ type: PageType; page: Page | null }> => [
+const getFlattenPageList = (pageSet: PageSet): Array<TypedPage> => [
   {
     type: PageTypes.FrontPage,
     page: pageSet.frontPage,
@@ -167,7 +169,7 @@ export const addPageDataAtom = atom(
     } else {
       const newPage = {
         id: crypto.randomUUID(),
-        pageDataHistory: [newPageData] as NonEmptyArray<PageData>,
+        pageDataHistory: [newPageData],
       }
       switch (type) {
         case PageTypes.FrontPage:
@@ -193,11 +195,21 @@ export const addPageDataAtom = atom(
 )
 
 /**
- * get page data for export read-only atom
+ * Get page data for export read-only atom
  */
 export const getPageDataForExportAtom = atom((get) =>
   JSON.stringify({
     version: DataFormatVersions.v202503,
     pages: getFlattenPageList(get(pageSetAtom)),
   }),
+)
+
+/**
+ * Merge import page data async write-only atom
+ */
+export const mergeImportPageDataAtom = atom(
+  null,
+  async (get, set, versionedPageList: VersionedPageList) => {
+    set(pageSetAtom, generateMergedPageSet(versionedPageList, get(pageSetAtom)))
+  },
 )

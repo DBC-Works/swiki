@@ -1,7 +1,9 @@
 import ArticleIcon from '@mui/icons-material/Article'
 import { Avatar, List, ListItemAvatar, ListItemButton, ListItemText, css } from '@mui/material'
+import { useAtomValue } from 'jotai'
 import { useCallback } from 'react'
 
+import { inProcessingAtom } from '../../states/edit/atoms'
 import type { PageData, PageInfoForList, PageType } from '../../states/pages/types'
 import { useMoveTo } from '../adapters/hooks'
 import { getLanguage, getTitleToDisplay } from '../i18n'
@@ -56,6 +58,7 @@ const PageInfoListRow: React.FC<PageInfoListRowProps> = ({
   page,
   updateCount,
 }): JSX.Element => {
+  const inProcessing = useAtomValue(inProcessingAtom)
   const moveTo = useMoveTo()
 
   const title = getTitleToDisplay(type, page?.title ?? null)
@@ -77,7 +80,7 @@ const PageInfoListRow: React.FC<PageInfoListRowProps> = ({
   }, [moveTo, path])
 
   return (
-    <ListItemButton onClick={handleClick}>
+    <ListItemButton disabled={inProcessing} onClick={handleClick}>
       <ListItemAvatar>
         <Avatar>
           <ArticleIcon />

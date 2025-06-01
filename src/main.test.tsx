@@ -6,13 +6,12 @@ import { describe, expect, it } from 'vitest'
 
 import './i18n'
 import { routeTree } from './routeTree.gen'
-import type { PageData, PageSet } from './states/pages/types'
+import type { PageSet } from './states/pages/types'
 import {
   type SetUpResult,
   fireToggleEvent,
   setupComponentWithStateProviderUnderTest,
 } from './testUtils'
-import type { NonEmptyArray } from './types'
 
 describe('route', () => {
   const initialPageSet = {
@@ -34,7 +33,7 @@ describe('route', () => {
             content: 'Content page content',
             dateAndTime: '2024-12-31T00:00:00Z',
           },
-        ] as NonEmptyArray<PageData>,
+        ],
       },
     ],
   }
@@ -246,7 +245,7 @@ describe('route', () => {
                   '[External link](https://www.example.com)\nPlease click [[Destination page]].\nPlease do not click [[Not exist page]].',
                 dateAndTime: '2025-02-01T00:00:00Z',
               },
-            ] as NonEmptyArray<PageData>,
+            ],
           },
           {
             id: crypto.randomUUID(),
@@ -257,7 +256,7 @@ describe('route', () => {
                 content: 'Destination page content.',
                 dateAndTime: '2025-01-01T00:00:00Z',
               },
-            ] as NonEmptyArray<PageData>,
+            ],
           },
         ],
       }
@@ -291,7 +290,7 @@ describe('route', () => {
                 content: 'Please click [[Not exist page]] to add new page.',
                 dateAndTime: '2025-02-01T00:00:00Z',
               },
-            ] as NonEmptyArray<PageData>,
+            ],
           },
         ],
       }
@@ -320,7 +319,7 @@ describe('route', () => {
                 content: '[External link](https://www.example.com)',
                 dateAndTime: '2025-01-01T00:00:00Z',
               },
-            ] as NonEmptyArray<PageData>,
+            ],
           },
         ],
       }

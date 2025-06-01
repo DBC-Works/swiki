@@ -1,4 +1,4 @@
-import type { NonEmptyArray, Uuid } from '../../types'
+import { type } from 'arktype'
 
 /**
  * Page type
@@ -19,122 +19,129 @@ export const PageTypes = {
    */
   Content: 'Content',
 } as const satisfies Record<string, string>
-export type PageType = (typeof PageTypes)[keyof typeof PageTypes]
+export const PageType = type.valueOf(PageTypes)
+export type PageType = typeof PageType.infer
 
 /**
  * Page presentation
  */
-export type PagePresentation = {
+export const PagePresentation = type({
   /**
    * Language(RFC 5646)
    */
-  language: string
+  language: 'string',
 
   /**
    * Title
    */
-  title: string
+  title: 'string',
 
   /**
    * Content
    */
-  content: string
-}
+  content: 'string',
+})
+export type PagePresentation = typeof PagePresentation.infer
 
 /**
  * Page data
  */
-export type PageData = PagePresentation & {
+export const PageData = PagePresentation.and({
   /**
    * Date and time(ISO 8601 extended format with UTC time zone string)
    */
-  dateAndTime: string
-}
+  dateAndTime: 'string.date.iso',
+})
+export type PageData = typeof PageData.infer
 
 /**
  * Page
  */
-export type Page = {
+export const Page = type({
   /**
    * ID(UUIDv4)
    */
-  id: Uuid
+  id: 'string.uuid.v4',
 
   /**
    * Page data history
    */
-  pageDataHistory: NonEmptyArray<PageData>
-}
+  pageDataHistory: PageData.array().atLeastLength(1),
+})
+export type Page = typeof Page.infer
 
 /**
  * Page set
  */
-export type PageSet = {
+export const PageSet = type({
   /**
    * Front page
    */
-  frontPage: Page | null
+  frontPage: Page.or(type.null),
 
   /**
    * Sand box
    */
-  sandBox: Page | null
+  sandBox: Page.or(type.null),
 
   /**
    * Pages
    */
-  pages: Page[]
-}
+  pages: Page.array(),
+})
+export type PageSet = typeof PageSet.infer
 
 /**
  * Page edit source
  */
-export type PageEditSource = {
+export const PageEditSource = type({
   /**
    * Page type
    */
-  type: PageType
+  type: PageType,
 
   /**
    * ID
    */
-  id: Uuid | null
+  id: type.string.or(type.null),
 
   /**
    * Page presentation
    */
-  pagePresentation: PagePresentation | null
-}
+  pagePresentation: PagePresentation.or(type.null),
+})
+export type PageEditSource = typeof PageEditSource.infer
 
 /**
  * Page info for list
  */
-export type PageInfoForList = {
+export const PageInfoForList = type({
   /**
    * Page type
    */
-  type: PageType
+  type: PageType,
 
   /**
    * Page data
    */
-  page: PageData | null
+  page: PageData.or(type.null),
 
   /**
    * Create date and time
    */
-  createDateAndTime: string | null
+  createDateAndTime: type.string.or(type.null),
 
   /**
    * Last update date and time
    */
-  lastUpdateDateAndTime: string | null
+  lastUpdateDateAndTime: type.string.or(type.null),
 
   /**
    * Update count
    */
-  updateCount: number | null
-}
+  updateCount: type.number.or(type.null),
+})
+export type PageInfoForList = typeof PageInfoForList.infer
 
 /**
  * Path type
@@ -165,7 +172,17 @@ export const PathTypes = {
    */
   History: '/history',
 } as const satisfies Record<string, string>
+export const PathType = type.valueOf(PathTypes)
 export type PathType = (typeof PathTypes)[keyof typeof PathTypes]
+
+/**
+ * Typed page
+ */
+const TypedPage = type({
+  type: PageType,
+  page: Page.or(type.null),
+})
+export type TypedPage = typeof TypedPage.infer
 
 /**
  * Data format versions
@@ -173,4 +190,14 @@ export type PathType = (typeof PathTypes)[keyof typeof PathTypes]
 export const DataFormatVersions = {
   v202503: 202503,
 } as const satisfies Record<string, number>
+export const DataFormatVersion = type.valueOf(DataFormatVersions)
 export type DataFormatVersion = (typeof DataFormatVersions)[keyof typeof DataFormatVersions]
+
+/**
+ * Versioned page list
+ */
+export const VersionedPageList = type({
+  version: DataFormatVersion,
+  pages: TypedPage.array(),
+})
+export type VersionedPageList = typeof VersionedPageList.infer
