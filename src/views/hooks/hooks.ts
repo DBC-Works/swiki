@@ -1,5 +1,6 @@
 import { useMediaQuery, useTheme } from '@mui/material'
 import { useAtomValue } from 'jotai'
+import type { RefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import {
@@ -296,4 +297,12 @@ export const useExportDataBlob = (): Blob => {
   return new Blob([exportData], {
     type: 'application/json',
   })
+}
+
+/**
+ * Call click method of HTMLInputElement
+ * @param inputRef HTMLInputElement reference object
+ */
+export const useClickInput = (inputRef: RefObject<HTMLInputElement>): void => {
+  inputRef.current?.click()
 }
