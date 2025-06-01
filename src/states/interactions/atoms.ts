@@ -6,6 +6,10 @@ import { temporaryNotifications } from './states'
  */
 const temporaryNotificationsAtom = atom(temporaryNotifications)
 
+/**
+ * Get temporary notification read-only atom
+ * @returns The first temporary notification or an empty string if none exist
+ */
 export const getTemporaryNotificationAtom = atom((get) => {
   const notifications = get(temporaryNotificationsAtom)
   return 0 < notifications.length ? notifications[0] : ''
