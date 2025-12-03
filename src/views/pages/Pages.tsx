@@ -49,7 +49,7 @@ const CSS_NO_MATCH = css({
   margin: '1rem',
 })
 
-let timerId: number | null = null
+let timerId: ReturnType<typeof setTimeout> | null = null
 
 /**
  * Page list component
