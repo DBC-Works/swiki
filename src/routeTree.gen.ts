@@ -8,144 +8,68 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as NewPageRouteImport } from './routes/NewPage'
+import { Route as SandBoxRouteImport } from './routes/SandBox'
+import { Route as HistoryIndexRouteImport } from './routes/history/index'
+import { Route as PagesIndexRouteImport } from './routes/pages/index'
+import { Route as PagesPageTitleIndexRouteImport } from './routes/pages/$pageTitle/index'
+import { Route as PagesPageTitleEditRouteImport } from './routes/pages/$pageTitle/edit'
+import { Route as PagesPageTitleDiffToFromRouteImport } from './routes/pages/$pageTitle/diff/$to/$from'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as SandBoxImport } from './routes/SandBox'
-import { Route as NewPageImport } from './routes/NewPage'
-import { Route as IndexImport } from './routes/index'
-import { Route as PagesIndexImport } from './routes/pages/index'
-import { Route as HistoryIndexImport } from './routes/history/index'
-import { Route as PagesPageTitleIndexImport } from './routes/pages/$pageTitle/index'
-import { Route as PagesPageTitleEditImport } from './routes/pages/$pageTitle/edit'
-import { Route as PagesPageTitleDiffToFromImport } from './routes/pages/$pageTitle/diff/$to/$from'
-
-// Create/Update Routes
-
-const SandBoxRoute = SandBoxImport.update({
-  id: '/SandBox',
-  path: '/SandBox',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const NewPageRoute = NewPageImport.update({
-  id: '/NewPage',
-  path: '/NewPage',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PagesIndexRoute = PagesIndexImport.update({
-  id: '/pages/',
-  path: '/pages/',
-  getParentRoute: () => rootRoute,
+const NewPageRoute = NewPageRouteImport.update({
+  id: '/NewPage',
+  path: '/NewPage',
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const HistoryIndexRoute = HistoryIndexImport.update({
+const SandBoxRoute = SandBoxRouteImport.update({
+  id: '/SandBox',
+  path: '/SandBox',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoryIndexRoute = HistoryIndexRouteImport.update({
   id: '/history/',
   path: '/history/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PagesPageTitleIndexRoute = PagesPageTitleIndexImport.update({
+const PagesIndexRoute = PagesIndexRouteImport.update({
+  id: '/pages/',
+  path: '/pages/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PagesPageTitleIndexRoute = PagesPageTitleIndexRouteImport.update({
   id: '/pages/$pageTitle/',
   path: '/pages/$pageTitle/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PagesPageTitleEditRoute = PagesPageTitleEditImport.update({
+const PagesPageTitleEditRoute = PagesPageTitleEditRouteImport.update({
   id: '/pages/$pageTitle/edit',
   path: '/pages/$pageTitle/edit',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PagesPageTitleDiffToFromRoute = PagesPageTitleDiffToFromImport.update({
-  id: '/pages/$pageTitle/diff/$to/$from',
-  path: '/pages/$pageTitle/diff/$to/$from',
-  getParentRoute: () => rootRoute,
-} as any)
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/NewPage': {
-      id: '/NewPage'
-      path: '/NewPage'
-      fullPath: '/NewPage'
-      preLoaderRoute: typeof NewPageImport
-      parentRoute: typeof rootRoute
-    }
-    '/SandBox': {
-      id: '/SandBox'
-      path: '/SandBox'
-      fullPath: '/SandBox'
-      preLoaderRoute: typeof SandBoxImport
-      parentRoute: typeof rootRoute
-    }
-    '/history/': {
-      id: '/history/'
-      path: '/history'
-      fullPath: '/history'
-      preLoaderRoute: typeof HistoryIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/pages/': {
-      id: '/pages/'
-      path: '/pages'
-      fullPath: '/pages'
-      preLoaderRoute: typeof PagesIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/pages/$pageTitle/edit': {
-      id: '/pages/$pageTitle/edit'
-      path: '/pages/$pageTitle/edit'
-      fullPath: '/pages/$pageTitle/edit'
-      preLoaderRoute: typeof PagesPageTitleEditImport
-      parentRoute: typeof rootRoute
-    }
-    '/pages/$pageTitle/': {
-      id: '/pages/$pageTitle/'
-      path: '/pages/$pageTitle'
-      fullPath: '/pages/$pageTitle'
-      preLoaderRoute: typeof PagesPageTitleIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/pages/$pageTitle/diff/$to/$from': {
-      id: '/pages/$pageTitle/diff/$to/$from'
-      path: '/pages/$pageTitle/diff/$to/$from'
-      fullPath: '/pages/$pageTitle/diff/$to/$from'
-      preLoaderRoute: typeof PagesPageTitleDiffToFromImport
-      parentRoute: typeof rootRoute
-    }
-  }
-}
-
-// Create and export the route tree
+const PagesPageTitleDiffToFromRoute =
+  PagesPageTitleDiffToFromRouteImport.update({
+    id: '/pages/$pageTitle/diff/$to/$from',
+    path: '/pages/$pageTitle/diff/$to/$from',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/NewPage': typeof NewPageRoute
   '/SandBox': typeof SandBoxRoute
-  '/history': typeof HistoryIndexRoute
-  '/pages': typeof PagesIndexRoute
+  '/history/': typeof HistoryIndexRoute
+  '/pages/': typeof PagesIndexRoute
   '/pages/$pageTitle/edit': typeof PagesPageTitleEditRoute
-  '/pages/$pageTitle': typeof PagesPageTitleIndexRoute
+  '/pages/$pageTitle/': typeof PagesPageTitleIndexRoute
   '/pages/$pageTitle/diff/$to/$from': typeof PagesPageTitleDiffToFromRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/NewPage': typeof NewPageRoute
@@ -156,9 +80,8 @@ export interface FileRoutesByTo {
   '/pages/$pageTitle': typeof PagesPageTitleIndexRoute
   '/pages/$pageTitle/diff/$to/$from': typeof PagesPageTitleDiffToFromRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/NewPage': typeof NewPageRoute
   '/SandBox': typeof SandBoxRoute
@@ -168,17 +91,16 @@ export interface FileRoutesById {
   '/pages/$pageTitle/': typeof PagesPageTitleIndexRoute
   '/pages/$pageTitle/diff/$to/$from': typeof PagesPageTitleDiffToFromRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/NewPage'
     | '/SandBox'
-    | '/history'
-    | '/pages'
+    | '/history/'
+    | '/pages/'
     | '/pages/$pageTitle/edit'
-    | '/pages/$pageTitle'
+    | '/pages/$pageTitle/'
     | '/pages/$pageTitle/diff/$to/$from'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -202,7 +124,6 @@ export interface FileRouteTypes {
     | '/pages/$pageTitle/diff/$to/$from'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   NewPageRoute: typeof NewPageRoute
@@ -212,6 +133,67 @@ export interface RootRouteChildren {
   PagesPageTitleEditRoute: typeof PagesPageTitleEditRoute
   PagesPageTitleIndexRoute: typeof PagesPageTitleIndexRoute
   PagesPageTitleDiffToFromRoute: typeof PagesPageTitleDiffToFromRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/NewPage': {
+      id: '/NewPage'
+      path: '/NewPage'
+      fullPath: '/NewPage'
+      preLoaderRoute: typeof NewPageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/SandBox': {
+      id: '/SandBox'
+      path: '/SandBox'
+      fullPath: '/SandBox'
+      preLoaderRoute: typeof SandBoxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/history/': {
+      id: '/history/'
+      path: '/history'
+      fullPath: '/history/'
+      preLoaderRoute: typeof HistoryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pages/': {
+      id: '/pages/'
+      path: '/pages'
+      fullPath: '/pages/'
+      preLoaderRoute: typeof PagesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pages/$pageTitle/': {
+      id: '/pages/$pageTitle/'
+      path: '/pages/$pageTitle'
+      fullPath: '/pages/$pageTitle/'
+      preLoaderRoute: typeof PagesPageTitleIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pages/$pageTitle/edit': {
+      id: '/pages/$pageTitle/edit'
+      path: '/pages/$pageTitle/edit'
+      fullPath: '/pages/$pageTitle/edit'
+      preLoaderRoute: typeof PagesPageTitleEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pages/$pageTitle/diff/$to/$from': {
+      id: '/pages/$pageTitle/diff/$to/$from'
+      path: '/pages/$pageTitle/diff/$to/$from'
+      fullPath: '/pages/$pageTitle/diff/$to/$from'
+      preLoaderRoute: typeof PagesPageTitleDiffToFromRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -224,51 +206,6 @@ const rootRouteChildren: RootRouteChildren = {
   PagesPageTitleIndexRoute: PagesPageTitleIndexRoute,
   PagesPageTitleDiffToFromRoute: PagesPageTitleDiffToFromRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/NewPage",
-        "/SandBox",
-        "/history/",
-        "/pages/",
-        "/pages/$pageTitle/edit",
-        "/pages/$pageTitle/",
-        "/pages/$pageTitle/diff/$to/$from"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/NewPage": {
-      "filePath": "NewPage.tsx"
-    },
-    "/SandBox": {
-      "filePath": "SandBox.tsx"
-    },
-    "/history/": {
-      "filePath": "history/index.tsx"
-    },
-    "/pages/": {
-      "filePath": "pages/index.tsx"
-    },
-    "/pages/$pageTitle/edit": {
-      "filePath": "pages/$pageTitle/edit.tsx"
-    },
-    "/pages/$pageTitle/": {
-      "filePath": "pages/$pageTitle/index.tsx"
-    },
-    "/pages/$pageTitle/diff/$to/$from": {
-      "filePath": "pages/$pageTitle/diff/$to/$from.tsx"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
